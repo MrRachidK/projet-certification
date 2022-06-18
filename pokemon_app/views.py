@@ -1,15 +1,11 @@
 import sys
 import os
 
-from matplotlib.font_manager import json_dump
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 from config import basedir
-from flask import Flask, render_template, request
-import pandas as pd
-import joblib
-from src.features.functions import replace_things, calculate_stats, calculate_effectiveness
+from flask import render_template, request
 from pokemon_app import app, db
 from pokemon_app.__init__ import mysql
 

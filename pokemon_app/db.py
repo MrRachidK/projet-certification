@@ -4,11 +4,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 from config import basedir
-from flask import Flask
-from pokemon_app import app
 import pandas as pd
-from src.features.functions import create_dictionaries
-import mysql.connector
 
 def convertToBinaryData(filename):
     # Convert digital data to binary format
@@ -43,9 +39,9 @@ def init_db(mysql):
     # Executing SQL Statements
 
     ## Database
-    cursor.execute("DROP DATABASE IF EXISTS pokemon_analytics")
-    cursor.execute("CREATE DATABASE IF NOT EXISTS pokemon_analytics")
-    cursor.execute("USE pokemon_analytics")
+    cursor.execute("DROP DATABASE IF EXISTS pokemon_relationals")
+    cursor.execute("CREATE DATABASE IF NOT EXISTS pokemon_relationals")
+    cursor.execute("USE pokemon_relationals")
 
     ## Tables
     ### Pokemon
@@ -139,6 +135,19 @@ def init_db(mysql):
     
     # Closing the cursor
     cursor.close()
+
+def create_dictionaries(data):
+    name_df = data.iloc[:, 0:2]
+    name_dict = name_df.set_index('Number').to_dict()['Name']
+
+    type_df = data.iloc[:, 0:4]
+    type_df = type_df.drop('Name', axis=1)
+    type_dict = type_df.set_index('Number').T.to_dict('list')
+
+    stats_df = data.drop(['Type_1', 'Type_2', 'Name', 'Generation'], axis=1)
+    stats_dict = stats_df.set_index('Number').T.to_dict('list')
+
+    return name_dict, type_dict, stats_dict
 
 def get_mapped_data(mysql):
     cursor = mysql.connection.cursor()

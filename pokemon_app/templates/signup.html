@@ -1,0 +1,29 @@
+# sign up
+
+{% extends "base.html" %}
+
+{% block title %} 
+Sign up
+{% endblock  %} 
+
+{% block content %}
+
+<h3>Sign Up</h3>
+<div >
+    <form method="POST" action="/signup">
+
+        <p> <input  type="text" name="last_name" placeholder="Last Name" autofocus=""> </p>
+
+        <p> <input  type="text" name="first_name" placeholder="First Name" autofocus=""> </p>
+
+        <p> <input  type="email" name="email" placeholder="Email" autofocus=""> </p>
+
+        <p> <input  type="text" name="username" placeholder="Username" autofocus=""> </p>
+
+        <p> <input  type="password" name="password" placeholder="Password"> </p>
+
+        <p> <button class="button is-block is-info is-large is-fullwidth">Sign Up</button> </p>
+    </form>
+</div>
+
+{% endblock %}

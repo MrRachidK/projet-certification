@@ -18,7 +18,7 @@
                     <br>
                     <div>
                     1st Pokemon: 
-                        <select class="from-control" id="pokemon" onchange="updateSelected1(event)" name="First_Pokemon">
+                        <select class="from-control" id="pokemon" onchange="updateSelected1(event)" name="first_pokemon">
                             <option value="0" selected>Select a Pokemon</option>
                             {% for index, name in pokemon_name.items() %}
                                 <option value="{{index}}" {if key == pokemon %}>{{name}}</option>
@@ -58,7 +58,7 @@
                     <br>
                         <div>
                         2nd Pokemon:  
-                            <select class="from-control" id="pokemon" onchange="updateSelected2(event)" name="Second_Pokemon">
+                            <select class="from-control" id="pokemon" onchange="updateSelected2(event)" name="second_pokemon">
                                 <option value="0">Select a Pokemon</option>
                                 {% for index, name in pokemon_name.items() %}
                                     <option value="{{index}}" {if key == pokemon %}>{{name}}</option>

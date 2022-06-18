@@ -48,19 +48,19 @@ def init_db(mysql):
     cursor.execute('''DROP TABLE IF EXISTS pokemon''')
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS pokemon (
-        Number INT NOT NULL,
-        Name VARCHAR(255) NOT NULL,
-        Type_1 VARCHAR(255) NOT NULL,
-        Type_2 VARCHAR(255) NOT NULL,
-        HP INT NOT NULL,
-        Attack INT NOT NULL,
-        Defense INT NOT NULL,
-        Sp_Atk INT NOT NULL,
-        Sp_Def INT NOT NULL,
-        Speed INT NOT NULL,
-        Generation INT NOT NULL,
-        Legendary TINYINT NOT NULL,
-        PRIMARY KEY (Number)
+        number INT NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        type_1 VARCHAR(255) NOT NULL,
+        type_2 VARCHAR(255) NOT NULL,
+        hp INT NOT NULL,
+        attack INT NOT NULL,
+        defense INT NOT NULL,
+        sp_atk INT NOT NULL,
+        sp_def INT NOT NULL,
+        speed INT NOT NULL,
+        generation INT NOT NULL,
+        legendary TINYINT NOT NULL,
+        PRIMARY KEY (number)
     ) 
     ''')
 
@@ -68,14 +68,14 @@ def init_db(mysql):
     cursor.execute('''DROP TABLE IF EXISTS combats''')
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS combats (
-        ID INT NOT NULL AUTO_INCREMENT,
-        First_pokemon INT NOT NULL,
-        Second_pokemon INT NOT NULL,
-        Winner INT NOT NULL,
-        PRIMARY KEY (ID),
-        FOREIGN KEY (First_pokemon) REFERENCES pokemon(Number),
-        FOREIGN KEY (Second_pokemon) REFERENCES pokemon(Number),
-        FOREIGN KEY (Winner) REFERENCES pokemon(Number)
+        id INT NOT NULL AUTO_INCREMENT,
+        first_pokemon INT NOT NULL,
+        second_pokemon INT NOT NULL,
+        winner INT NOT NULL,
+        PRIMARY KEY (id),
+        FOREIGN KEY (first_pokemon) REFERENCES pokemon(number),
+        FOREIGN KEY (second_pokemon) REFERENCES pokemon(number),
+        FOREIGN KEY (winner) REFERENCES pokemon(number)
     )
     ''')
 
@@ -83,10 +83,10 @@ def init_db(mysql):
     cursor.execute('''DROP TABLE IF EXISTS images''')
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS images (
-        Number INT NOT NULL AUTO_INCREMENT,
-        Image BLOB NOT NULL,
-        PRIMARY KEY (Number),
-        FOREIGN KEY (Number) REFERENCES pokemon(Number)
+        number INT NOT NULL AUTO_INCREMENT,
+        image BLOB NOT NULL,
+        PRIMARY KEY (number),
+        FOREIGN KEY (number) REFERENCES pokemon(number)
     )
     ''')
 
@@ -94,13 +94,13 @@ def init_db(mysql):
     cursor.execute('''DROP TABLE IF EXISTS users''')
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS users (
-        ID INT NOT NULL AUTO_INCREMENT,
-        Last_Name VARCHAR(255) NOT NULL,
-        First_Name VARCHAR(255) NOT NULL,
-        Email VARCHAR(255) NOT NULL,
-        Username VARCHAR(255) NOT NULL,
-        Password VARCHAR(255) NOT NULL,
-        PRIMARY KEY (ID)
+        id INT NOT NULL AUTO_INCREMENT,
+        last_name VARCHAR(255) NOT NULL,
+        first_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        username VARCHAR(255) NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        PRIMARY KEY (id)
     )
     ''')
 
@@ -114,7 +114,7 @@ def init_db(mysql):
         
 
     """ for i, row in combats_data.iterrows():
-        sql = "INSERT INTO combats (First_pokemon, Second_pokemon, Winner) VALUES (%s, %s, %s)"
+        sql = "INSERT INTO combats (first_pokemon, second_pokemon, winner) VALUES (%s, %s, %s)"
         cursor.execute(sql, tuple(row)) """
     
     """ cursor.execute('''
@@ -138,21 +138,21 @@ def init_db(mysql):
 
 def create_dictionaries(data):
     name_df = data.iloc[:, 0:2]
-    name_dict = name_df.set_index('Number').to_dict()['Name']
+    name_dict = name_df.set_index('number').to_dict()['name']
 
     type_df = data.iloc[:, 0:4]
-    type_df = type_df.drop('Name', axis=1)
-    type_dict = type_df.set_index('Number').T.to_dict('list')
+    type_df = type_df.drop('name', axis=1)
+    type_dict = type_df.set_index('number').T.to_dict('list')
 
-    stats_df = data.drop(['Type_1', 'Type_2', 'Name', 'Generation'], axis=1)
-    stats_dict = stats_df.set_index('Number').T.to_dict('list')
+    stats_df = data.drop(['type_1', 'type_2', 'name', 'generation'], axis=1)
+    stats_dict = stats_df.set_index('number').T.to_dict('list')
 
     return name_dict, type_dict, stats_dict
 
 def get_mapped_data(mysql):
     cursor = mysql.connection.cursor()
     # Executing SQL Statements
-    cursor.execute("USE pokemon_analytics")
+    cursor.execute("USE pokemon_relationals")
     pokemon_data = pd.read_sql('''SELECT * FROM pokemon''', con=mysql.connection)
     name_dict, type_dict, stats_dict = create_dictionaries(pokemon_data)
     cursor.close()

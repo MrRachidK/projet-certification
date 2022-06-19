@@ -5,11 +5,14 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 from flask import Flask
 from credentials import sql_user, sql_password, sql_host, sql_database
 from flask_mysqldb import MySQL
+from flask_login import LoginManager
 
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = -1
 app.config.from_object('config')
+
+from config import SECRET_KEY
 
 app.config['MYSQL_USER'] = sql_user
 app.config['MYSQL_PASSWORD'] = sql_password

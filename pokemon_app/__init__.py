@@ -18,6 +18,7 @@ app.config['MYSQL_USER'] = sql_user
 app.config['MYSQL_PASSWORD'] = sql_password
 app.config['MYSQL_HOST'] = sql_host
 app.config['MYSQL_DATABASE'] = sql_database
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 

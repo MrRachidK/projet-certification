@@ -18,7 +18,7 @@ from pokemon_app.__init__ import mysql
 
 # Home page
 
-@app.route('/login/home', methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
 def home():
     if 'loggedin' in session :
         # Get mapped data
@@ -41,7 +41,7 @@ def home():
         else:
             prediction = ""
         
-        return render_template("index.html", pokemon_name = name_dict, pokemon_stats = stats_dict, pokemon_types = type_dict, prediction_text = prediction)
+        return render_template("home.html", pokemon_name = name_dict, pokemon_stats = stats_dict, pokemon_types = type_dict, prediction_text = prediction)
 
     return redirect(url_for('login'))
 
@@ -81,8 +81,7 @@ def logout():
     return redirect(url_for('home'))
 """
 
-@app.route('/')
-@app.route('/login', methods =['GET', 'POST'])
+@app.route('/', methods =['GET', 'POST'])
 def login():
     msg=''
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
@@ -94,9 +93,9 @@ def login():
         account = cursor.fetchone()
         if account:
             session['loggedin'] = True
-            session['username'] = account[0]
-            session['password'] = account[1]
-            msg = 'Logged in successfully !'
+            session['id'] = account['id']
+            session['username'] = account['username']
+            msg = 'Logged in successfully!'
             return redirect(url_for('home'))
         else:
             msg = 'Incorrect username / password !'
@@ -162,7 +161,7 @@ def signup():
         elif not username or not password or not email:
             msg = 'Please fill out the form !'
         else:
-            cursor.execute('INSERT INTO users VALUES (NULL, % s, % s, % s, % s, % s)', (last_name, first_name,  email, username, password, ))
+            cursor.execute('INSERT INTO users VALUES (NULL, % s, % s, % s, % s, % s)', (last_name, first_name, email, username, password))
             mysql.connection.commit()
             msg = 'You have successfully registered !'
     elif request.method == 'POST':
@@ -170,4 +169,18 @@ def signup():
 
     return render_template('signup.html', msg = msg)
 
+# Profile
 
+@app.route('/profile')
+def profile():
+    # Check if user is loggedin
+    if 'loggedin' in session:
+        # We need all the account info for the user so we can display it on the profile page
+        cursor = mysql.connection.cursor()
+        cursor.execute('USE pokemon_relationals')
+        cursor.execute('SELECT * FROM users WHERE id = %s', (session['id'],))
+        account = cursor.fetchone()
+        # Show the profile page with account info
+        return render_template('profile.html', account=account)
+    # User is not loggedin redirect to login page
+    return redirect(url_for('login'))

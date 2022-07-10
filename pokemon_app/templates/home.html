@@ -88,9 +88,6 @@
         <button value="Submit">Run</button>
     </div>
 </form>
-<div class ="pred">
-    <p class = "result"><b>{{ prediction_text }}</b></p>
-</div>
 </div>
 
 <script>
@@ -107,7 +104,8 @@ let options = {
             max: 5,
             min: 0,
             ticks: {
-                stepSize: 1
+                callback: function() {return ""},
+                backdropColor: "rgba(0, 0, 0, 0)"
             },
             pointLabels: {
                 color: 'black',

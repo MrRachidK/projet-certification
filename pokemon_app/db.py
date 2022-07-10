@@ -1,10 +1,20 @@
 import sys 
 import os
+from this import d
+from turtle import st
+from unicodedata import name
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 from config import basedir
 import pandas as pd
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import ForeignKey
+from flask_login import UserMixin
+import logging as lg
+
+db = SQLAlchemy()
 
 def convertToBinaryData(filename):
     # Convert digital data to binary format
@@ -12,129 +22,154 @@ def convertToBinaryData(filename):
         binaryData = file.read()
     return binaryData
 
-def insertBLOB(pokemon_id, photo, mysql, cursor):
-    print("Inserting BLOB into images table")
-    try:
-        cursor = cursor
-
-        sql_insert_blob_query = """ INSERT INTO images
-                          (Number, Image) VALUES (%s,%s)"""
-
-        pokemonPicture = convertToBinaryData(photo)
-
-        # Convert data into tuple format
-        insert_blob_tuple = (pokemon_id, pokemonPicture)
-        result = cursor.execute(sql_insert_blob_query, insert_blob_tuple)
-        mysql.connection.commit()
-        print("Image and file inserted successfully as a BLOB into images table", result)
+class Pokemon(db.Model):
+    __tablename__ = 'pokemon'
+    number = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    type_1 = db.Column(db.String(255))
+    type_2 = db.Column(db.String(255))
+    hp = db.Column(db.Integer)
+    attack = db.Column(db.Integer)
+    defense = db.Column(db.Integer)
+    sp_atk = db.Column(db.Integer)
+    sp_def = db.Column(db.Integer)
+    speed = db.Column(db.Integer)
+    generation = db.Column(db.Integer)
+    legendary = db.Column(db.Boolean)
     
-    except mysql.connector.Error as error:
-        print("Failed inserting BLOB data into MySQL table {}".format(error))
+    def __repr__(self):
+        return '<Pokemon %r>' % self.name
 
-### Initialize MySQL database
-def init_db(mysql):
+    def json(self):
+        return {
+            'number': self.number,
+            'name': self.name,
+            'type_1': self.type_1,
+            'type_2': self.type_2,
+            'hp': self.hp,
+            'attack': self.attack,
+            'defense': self.defense,
+            'sp_atk': self.sp_atk,
+            'sp_def': self.sp_def,
+            'speed': self.speed,
+            'generation': self.generation,
+            'legendary': self.legendary,
+        }
+
+    @classmethod
+    def find_by_name(cls, name):
+        return cls.query.filter_by(name=name).first()
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()
+
+class Combat(db.Model):
+    __tablename__ = 'combats'
+    id = db.Column(db.Integer, primary_key=True)
+    first_pokemon = db.Column(db.Integer, ForeignKey('pokemon.number'))
+    second_pokemon = db.Column(db.Integer, ForeignKey('pokemon.number'))
+    winner = db.Column(db.Integer, ForeignKey('pokemon.number'))
+    loser = db.Column(db.Integer, ForeignKey('pokemon.number'))
+
+    def __repr__(self):
+        return '<Combat %r>' % self.id
+
+    def json(self):
+        return {
+            'id': self.id,
+            'first_pokemon': self.first_pokemon,
+            'second_pokemon': self.second_pokemon,
+            'winner': self.winner,
+            'loser': self.loser
+        }
+
+    @classmethod
+    def find_by_id(cls, id):
+        return cls.query.filter_by(id=id).first()
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()
+
+class Image(db.Model):
+    __tablename__ = 'images'
+    number = db.Column(db.Integer, ForeignKey('pokemon.number'), primary_key=True)
+    image = db.Column(db.LargeBinary)
+
+    def __repr__(self):
+        return '<Image %r>' % self.number
+
+    def json(self):
+        return {
+            'number': self.number,
+            'image': self.image
+        }
+
+    @classmethod
+    def find_by_number(cls, number):
+        return cls.query.filter_by(number=number).first()
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()
+
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    last_name = db.Column(db.String(255), )
+    first_name = db.Column(db.String(255))
+    email = db.Column(db.String(255))
+    username = db.Column(db.String(255))
+    password = db.Column(db.String(255))
+
+    def __repr__(self):
+        return '<User %r>' % self.username
+
+    def json(self):
+        return {'id': self.id, 
+                'username': self.username, 
+                'email': self.email
+                }
+
+    @classmethod
+    def get_by_email(cls, email):
+        return cls.query.filter_by(email=email).first()
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()
+
+def init_db():
+    db.drop_all()
+    db.create_all()
+
     pokemon_data = pd.read_csv(os.path.join(basedir, 'data/intermediate/pokemon.csv'), index_col=False, delimiter = ',')
-    """ combats_data = pd.read_csv(os.path.join(basedir, 'data/raw/combats.csv'), index_col=False, delimiter = ',') """
-    cursor = mysql.connection.cursor()
-    # Executing SQL Statements
-
-    ## Database
-    cursor.execute("DROP DATABASE IF EXISTS pokemon_relationals")
-    cursor.execute("CREATE DATABASE IF NOT EXISTS pokemon_relationals")
-    cursor.execute("USE pokemon_relationals")
-
-    ## Tables
-    ### Pokemon
-    cursor.execute('''DROP TABLE IF EXISTS pokemon''')
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS pokemon (
-        number INT NOT NULL,
-        name VARCHAR(255) NOT NULL,
-        type_1 VARCHAR(255) NOT NULL,
-        type_2 VARCHAR(255) NOT NULL,
-        hp INT NOT NULL,
-        attack INT NOT NULL,
-        defense INT NOT NULL,
-        sp_atk INT NOT NULL,
-        sp_def INT NOT NULL,
-        speed INT NOT NULL,
-        generation INT NOT NULL,
-        legendary TINYINT NOT NULL,
-        PRIMARY KEY (number)
-    ) 
-    ''')
-
-    ### Duels
-    cursor.execute('''DROP TABLE IF EXISTS combats''')
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS combats (
-        id INT NOT NULL AUTO_INCREMENT,
-        first_pokemon INT NOT NULL,
-        second_pokemon INT NOT NULL,
-        winner INT NOT NULL,
-        PRIMARY KEY (id),
-        FOREIGN KEY (first_pokemon) REFERENCES pokemon(number),
-        FOREIGN KEY (second_pokemon) REFERENCES pokemon(number),
-        FOREIGN KEY (winner) REFERENCES pokemon(number)
-    )
-    ''')
-
-    ### Images
-    cursor.execute('''DROP TABLE IF EXISTS images''')
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS images (
-        number INT NOT NULL AUTO_INCREMENT,
-        image BLOB NOT NULL,
-        PRIMARY KEY (number),
-        FOREIGN KEY (number) REFERENCES pokemon(number)
-    )
-    ''')
-
-    ### Users
-    cursor.execute('''DROP TABLE IF EXISTS users''')
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS users (
-        id INT NOT NULL AUTO_INCREMENT,
-        last_name VARCHAR(255) NOT NULL,
-        first_name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        username VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        PRIMARY KEY (id)
-    )
-    ''')
-
-    # Insertion of data
-    for i, row in pokemon_data.iterrows():
-        sql = "INSERT INTO pokemon VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        cursor.execute(sql, tuple(row))
+    pokemon_data = pokemon_data.rename(columns={'Sp. Atk': 'sp_atk', 'Sp. Def': 'sp_def'})
+    pokemon_data.to_sql('pokemon', db.engine, if_exists='append', index=False)    
 
     for i in range(1, 801):
-        insertBLOB(i, os.path.join(basedir, 'data/raw/images/{}.png'.format(i)), mysql, cursor)
-        
+        image = convertToBinaryData(os.path.join(basedir, 'data/raw/images/{}.png'.format(i)))
+        image_db = Image(number=i, image=image)
+        image_db.save_to_db()
 
-    """ for i, row in combats_data.iterrows():
-        sql = "INSERT INTO combats (first_pokemon, second_pokemon, winner) VALUES (%s, %s, %s)"
-        cursor.execute(sql, tuple(row)) """
-    
-    """ cursor.execute('''
-    SELECT 
-        c.ID, 
-        p.Name as 'First Pokemon', 
-        p1.Name as 'Second Pokemon',
-        p2.Name as 'Winner'
-    FROM `combats` c
-    JOIN `pokemon` p on p.Number = c.First_pokemon
-    JOIN `pokemon` p1 on p1.Number = c.Second_pokemon
-    JOIN `pokemon` p2 on p2.Number = c.Winner
-    ''') """
-    
-    
-    # Saving the Actions performed on the DB
-    mysql.connection.commit()
-    
-    # Closing the cursor
-    cursor.close()
+    lg.info('Database initialized')
 
 def create_dictionaries(data):
     name_df = data.iloc[:, 0:2]
@@ -149,13 +184,10 @@ def create_dictionaries(data):
 
     return name_dict, type_dict, stats_dict
 
-def get_mapped_data(mysql):
-    cursor = mysql.connection.cursor()
-    # Executing SQL Statements
-    cursor.execute("USE pokemon_relationals")
-    pokemon_data = pd.read_sql('''SELECT * FROM pokemon''', con=mysql.connection)
-    name_dict, type_dict, stats_dict = create_dictionaries(pokemon_data)
-    cursor.close()
+def get_mapped_data():
+    data = db.session.query(Pokemon).all()
+    df = pd.DataFrame([p.json() for p in data])
+    name_dict, type_dict, stats_dict = create_dictionaries(df)
+    print(stats_dict)
 
     return name_dict, type_dict, stats_dict
-

@@ -1,0 +1,92 @@
+{% extends 'layout.html' %}
+
+{% block title %}Results{% endblock %}
+
+{% block content %}
+<div class="result">
+    <div class="result-header">
+        <h1>And the winner is ...</h1>
+    </div>
+    <div class="result-body">
+        <div class="winner">
+            <p class="winner-name">{{ prediction_text }}</p>
+            {% for index, value in pokemon_name.items() %}
+                {% if value == prediction_text %}
+                    <img style="width: 300px; height: 300px" src= "{{ url_for('static', filename='img/poke/{}.png'.format(index)) }}" alt="{{ prediction_text }}">
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="statistics">
+            {% set winner_stats = [] %}
+            {% set loser_stats = [] %}
+            {% set loser = [] %}
+            {% for index, value in pokemon_name.items() %}
+                {% if value == prediction_text %}
+                    {% for stats in pokemon_stats[index] %}
+                        {% set winner_stats = winner_stats.append(stats) %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+
+            {% for key, res in pokemon_data.items() %}
+                {% for index, value in pokemon_name.items() %}
+                    {% if index == pokemon_data[key]|int and value != prediction_text %}
+                        {% set loser = loser.append(value) %}
+                        {% for stats in pokemon_stats[index] %}
+                            {% set loser_stats = loser_stats.append(stats) %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+                
+            <table>
+                <tr>
+                    <th colspan="4">Statistics differences</th>
+                </tr>
+                <tr>
+                <td>&nbsp;</td>
+                <th>{{ prediction_text }}</th>
+                <th>{{ loser[0] }}</th>
+                <th>Difference</th>
+                </tr>
+                <tr>
+                <th>Hit Points</th>
+                <td>{{ winner_stats[0] }}</td>
+                <td>{{ loser_stats[0] }}</td>
+                <td class="{{'red' if winner_stats[0] - loser_stats[0] < 0 else 'green'}}">{{ winner_stats[0] - loser_stats[0] }}</td>
+                </tr>
+                <tr>
+                <th>Attack</th>
+                <td>{{ winner_stats[1] }}</td>
+                <td>{{ loser_stats[1] }}</td>
+                <td class="{{'red' if winner_stats[1] - loser_stats[1] < 0 else 'green'}}">{{ winner_stats[1] - loser_stats[1] }}</td>
+                </tr>
+                <tr>
+                <th>Defense</th>
+                <td>{{ winner_stats[2] }}</td>
+                <td>{{ loser_stats[2] }}</td>
+                <td class="{{'red' if winner_stats[2] - loser_stats[2] < 0 else 'green'}}">{{ winner_stats[2] - loser_stats[2] }}</td>
+                </tr>
+                <tr>
+                <th>Special Attack</th>
+                <td>{{ winner_stats[3] }}</td>
+                <td>{{ loser_stats[3] }}</td>
+                <td class="{{'red' if winner_stats[3] - loser_stats[3] < 0 else 'green'}}">{{ winner_stats[3] - loser_stats[3] }}</td>
+                </tr>
+                <tr>
+                <th>Special Defense</th>
+                <td>{{ winner_stats[4] }}</td>
+                <td>{{ loser_stats[4] }}</td>
+                <td class="{{'red' if winner_stats[4] - loser_stats[4] < 0 else 'green'}}">{{ winner_stats[4] - loser_stats[4] }}</td>
+                </tr>
+                <tr>
+                <th>Special Defense</th>
+                <td>{{ winner_stats[5] }}</td>
+                <td>{{ loser_stats[5] }}</td>
+                <td class="{{'red' if winner_stats[5] - loser_stats[5] < 0 else 'green'}}">{{ winner_stats[5] - loser_stats[5] }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

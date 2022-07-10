@@ -23,25 +23,6 @@ body.loggedin {
     background-color: #f3f4f7;
 }
 
-/* Margin, layout and design of paragraphs and structures */
-
-.result {
-    font-weight: bold;
-    background-color: #4CAF50;
-    padding: 16px 32px;
-    display: inline-block;
-    text-decoration: none;
-    border-radius:3px;
-    color: black;
-    border-color: black;
-    font-family: Arial;
-    border-style: ridge;
-}
-
-.pred {
-    text-align:center;
-}
-
 /* Layout and structure of form body in home page */
 
 div.container {
@@ -111,6 +92,71 @@ div.stats {
 	font-weight: bold;
 	color: #4a536e;
 	padding-right: 15px;
+}
+
+/* Result page */
+
+.content .result {
+    width: 700px;
+    height: 800px;
+    background-color: rgba(0,0,0,0.5);
+    font-size: 18px;
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    border-radius: 10px;
+    box-shadow: 2px 2px 15px
+}
+
+.content .result .result-header h1{
+    text-align: center;
+    padding-top: 15px;
+    font-size: 36px;
+}
+
+.content .result .result-body .winner {
+    text-align: center;
+}
+
+.content .result .result-body .winner .winner-name {
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #4a536e;
+}
+
+.content .result .result-body .statistics {
+    margin-top: 30px;
+    margin-left: 15px
+}
+
+.content .result .result-body .statistics table{
+    width: 80%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    position: relative;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.content .result .result-body .statistics td, th {
+    border: 1px solid rgb(190,190,190);
+    text-align: center;
+    padding: 5px 5px;
+}
+
+.content .result .result-body .statistics .red {
+    color: rgb(177, 35, 35);
+}
+
+.content .result .result-body .statistics .green {
+    color: rgb(28, 65, 28);
 }
 
 /* Style for login and signup forms */

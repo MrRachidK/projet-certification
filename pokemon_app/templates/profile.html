@@ -3,26 +3,65 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-<h2>Profile Page</h2>
-<div class="profile">
-    <p>Your account details are below:</p>
-    <table>
-        <tr>
-            <td>Last Name:</td>
-            <td>{{ last_name }}</td>
-        </tr>
-        <tr>
-            <td>First Name:</td>
-            <td>{{ first_name }}</td>
-        </tr>
-        <tr>
-            <td>Username:</td>
-            <td>{{ username }}</td>
-        </tr>
-        <tr>
-            <td>Email:</td>
-            <td>{{ email }}</td>
-        </tr>
-    </table>
+<h1>Profile Page</h1>
+<div>
+    <div class="profile_table">
+        <p>Your account details are below:</p>
+        <table>
+            <tr>
+                <td>Last Name:</td>
+                <td>{{ last_name }}</td>
+            </tr>
+            <tr>
+                <td>First Name:</td>
+                <td>{{ first_name }}</td>
+            </tr>
+            <tr>
+                <td>Username:</td>
+                <td>{{ username }}</td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td>{{ email }}</td>
+            </tr>
+        </table>
+    </div>
+    <h2>Your 10 most recent duels</h2>
+    <div class="duel_table">
+        <table>
+            <tr>
+                <th>Duel ID</th>
+                <th>First Pokemon</th>
+                <th>Second Pokemon</th>
+                <th>Winner</th>
+            </tr>
+            {% for number in range(1, 11) %}
+                <tr>
+                    <td>{{ number}}</td>
+                    <td>
+                        {% if combats|length >= number %}
+                            {{ combats[-number]['first_pokemon'] }}
+                        {% else %}
+                            ------------
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if combats|length >= number %}
+                            {{ combats[-number]['second_pokemon'] }}
+                        {% else %}
+                            ------------
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if combats|length >= number %}
+                            {{ combats[-number]['winner'] }}
+                        {% else %}
+                            ------------
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 </div>
 {% endblock %}

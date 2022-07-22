@@ -71,10 +71,10 @@ class Pokemon(db.Model):
 class Combat(db.Model):
     __tablename__ = 'combats'
     id = db.Column(db.Integer, primary_key=True)
-    first_pokemon = db.Column(db.Integer, ForeignKey('pokemon.number'))
-    second_pokemon = db.Column(db.Integer, ForeignKey('pokemon.number'))
-    winner = db.Column(db.Integer, ForeignKey('pokemon.number'))
-    loser = db.Column(db.Integer, ForeignKey('pokemon.number'))
+    user_id = db.Column(db.Integer, ForeignKey('users.id'))
+    first_pokemon = db.Column(db.String(255), ForeignKey('pokemon.number'))
+    second_pokemon = db.Column(db.String(255), ForeignKey('pokemon.number'))
+    winner = db.Column(db.String(255), ForeignKey('pokemon.number'))
 
     def __repr__(self):
         return '<Combat %r>' % self.id
@@ -82,10 +82,10 @@ class Combat(db.Model):
     def json(self):
         return {
             'id': self.id,
+            'user_id': self.user_id,
             'first_pokemon': self.first_pokemon,
             'second_pokemon': self.second_pokemon,
             'winner': self.winner,
-            'loser': self.loser
         }
 
     @classmethod
@@ -188,6 +188,12 @@ def get_mapped_data():
     data = db.session.query(Pokemon).all()
     df = pd.DataFrame([p.json() for p in data])
     name_dict, type_dict, stats_dict = create_dictionaries(df)
-    print(stats_dict)
 
     return name_dict, type_dict, stats_dict
+
+def get_combat_data(user_id):
+    data = db.session.query(Combat).all()
+    df = [c.json() for c in data]
+    df = [c for c in df if c['user_id'] == user_id]
+
+    return df

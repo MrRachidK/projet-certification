@@ -1,6 +1,9 @@
+from distutils.command.build_scripts import first_line_re
+from hashlib import new
 import sys
 import os
 from turtle import st
+from unicodedata import name
 
 from pokemon_app.auth import login
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -39,18 +42,23 @@ def home():
         # Get prediction
         url = "http://localhost:5001/get_prediction"
         prediction = requests.get(url, json=pokemon_json).text
+        new_duel = db.Combat(user_id = current_user.id, first_pokemon=name_dict[int(pokemon_data['first_pokemon'])], second_pokemon=name_dict[int(pokemon_data['second_pokemon'])], winner=prediction)
+        new_duel.save_to_db()
         
         return render_template('result.html', pokemon_name = name_dict, pokemon_stats = stats_dict, pokemon_types = type_dict, pokemon_data = pokemon_data, prediction_text = prediction)
         
     else:
         prediction = ""
-    
+
     return render_template("home.html", pokemon_name = name_dict, pokemon_stats = stats_dict, pokemon_types = type_dict)
 
-    
+
 # Profile
 
 @main.route('/profile')
 @login_required
 def profile():
-    return render_template("profile.html", last_name=current_user.last_name, first_name=current_user.first_name, username=current_user.username, email=current_user.email)
+    # Get combats data
+    combats = db.get_combat_data(current_user.id)
+    
+    return render_template("profile.html", combats = combats, last_name=current_user.last_name, first_name=current_user.first_name, username=current_user.username, email=current_user.email)

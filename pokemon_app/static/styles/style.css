@@ -73,25 +73,50 @@ div.stats {
 
 /* Profile page */
 
-.content h2 {
+.content h1 {
     margin: 0;
     padding: 25px 0 25px 25px;
-    font-size: 22px;
+    font-size: 28px;
     border-bottom: 1px solid #e0e0e3;
     color: #4a536e;
 }
 
-.content .profile{
+.content .profile_table{
 	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
   	margin: 25px 0;
   	padding: 25px;
 	background-color: #fff;
 }
 
-.content .profile table td:first-child, .content .profile > div table td:first-child {
+.content .profile_table table td:first-child, .content .profile > div table td:first-child {
 	font-weight: bold;
 	color: #4a536e;
 	padding-right: 15px;
+}
+
+.content h2 {
+    margin: 0;
+    padding: 25px 0 25px 25px;
+    font-size: 22px;
+    color: #4a536e;
+}
+
+.content .duel_table table {
+    width: 80%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    position: relative;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.content .duel_table td, th {
+    border: 1px solid rgb(190,190,190);
+    text-align: center;
+    padding: 5px 5px;
 }
 
 /* Result page */

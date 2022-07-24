@@ -37,7 +37,7 @@ def home():
             return redirect(url_for("main.home"))
         else :
         # Get prediction
-            url = "http://localhost:5001/get_prediction"
+            url = "https://api-pokemon-arena.azurewebsites.net/get_prediction"
             prediction = requests.get(url, json=pokemon_json).text
             new_duel = db.Combat(user_id = current_user.id, first_pokemon=name_dict[int(pokemon_data['first_pokemon'])], second_pokemon=name_dict[int(pokemon_data['second_pokemon'])], winner=prediction)
             new_duel.save_to_db()

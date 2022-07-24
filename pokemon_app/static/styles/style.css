@@ -9,7 +9,7 @@
 }
 
 body {
-    background-color: #435165;
+    background-color: #c4c8d3;
   	margin: 0;
 }
 
@@ -20,7 +20,7 @@ form {
 /***** Home page *****/
 
 body.loggedin {
-    background-color: #f3f4f7;
+    background-color: #c4c8d3;
 }
 
 /* Layout and structure of form body in home page */
@@ -58,9 +58,10 @@ span.pokemon_trivia {
     margin-left: 3%;
 }
 
-div.types span {
-    display:inline-block;
-    vertical-align:middle;
+.types {
+    display: flex;
+    flex-direction: row;
+    gap: 5px
 }
 
 div.stats {
@@ -77,7 +78,6 @@ div.stats {
     margin: 0;
     padding: 25px 0 25px 25px;
     font-size: 28px;
-    border-bottom: 1px solid #e0e0e3;
     color: #4a536e;
 }
 
@@ -113,7 +113,13 @@ div.stats {
     margin: auto;
 }
 
-.content .duel_table td, th {
+.content .duel_table th {
+    border: 1px solid rgb(190,190,190);
+    text-align: center;
+    padding: 5px 5px;
+}
+
+.content .duel_table td {
     border: 1px solid rgb(190,190,190);
     text-align: center;
     padding: 5px 5px;
@@ -170,7 +176,13 @@ div.stats {
     margin: auto;
 }
 
-.content .result .result-body .statistics td, th {
+.content .result .result-body .statistics th {
+    border: 1px solid rgb(190,190,190);
+    text-align: center;
+    padding: 5px 5px;
+}
+
+.content .result .result-body .statistics td {
     border: 1px solid rgb(190,190,190);
     text-align: center;
     padding: 5px 5px;
@@ -186,14 +198,22 @@ div.stats {
 
 /* Style for login and signup forms */
 
-.login, .register {
+.login {
+    background-color: #c4c8d3;
+}
+
+.register {
+    background-color: #c4c8d3;
+}
+
+.login_board, .register_board {
     width: 400px;
     background-color: #ffffff;
     box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
     margin: 100px auto;
 }
 
-.login h1, .register h1 {
+.login_board h1, .register_board h1 {
     text-align: center;
     color: #5b6574;
     font-size: 24px;
@@ -201,12 +221,12 @@ div.stats {
     border-bottom: 1px solid #dee0e4;
 }
 
-.login .links, .register .links {
+.login_board .links, .register_board .links {
     display: flex;
     padding: 0 15px;
 }
 
-.login .links a, .register .links a {
+.login_board .links a, .register_board .links a {
     color: #adb2ba;
     text-decoration: none;
     display: inline-flex;
@@ -214,23 +234,23 @@ div.stats {
     font-weight: bold;
 }
 
-.login .links a:hover, .register .links a:hover {
+.login_board .links a:hover, .register_board .links a:hover {
     color: #9da3ac;
 }
 
-.login .links a.active, .register .links a.active {
+.login_board .links a.active, .register_board .links a.active {
     border-bottom: 3px solid #3274d6;
     color: #3274d6;
 }
 
-.login form, .register form {
+.login_board form, .register_board form {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     padding-top: 20px;
 }
 
-.login form label, .register form label {
+.login_board form label, .register_board form label {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -240,7 +260,7 @@ div.stats {
     color: #ffffff;
 }
 
-.login form input[type="password"], .login form input[type="text"], .login form input[type="email"], .register form input[type="password"], .register form input[type="text"], .register form input[type="email"] {
+.login_board form input[type="password"], .login_board form input[type="text"], .login_board form input[type="email"], .register_board form input[type="password"], .register_board form input[type="text"], .register_board form input[type="email"] {
     width: 320px;
     height: 50px;
     border: 1px solid #dee0e4;
@@ -248,7 +268,7 @@ div.stats {
     padding: 0 15px;
 }
 
-.login form input[type="submit"], .register form input[type="submit"] {
+.login_board form input[type="submit"], .register_board form input[type="submit"] {
     width: 100%;
     padding: 15px;
     margin-top: 20px;
@@ -260,7 +280,7 @@ div.stats {
     transition: background-color 0.2s;
 }
 
-.login form input[type="submit"]:hover, .register form input[type="submit"]:hover {
+.login_board form input[type="submit"]:hover, .register_board form input[type="submit"]:hover {
     background-color: #2868c7;
     transition: background-color 0.2s;
 }

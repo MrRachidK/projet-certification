@@ -5,7 +5,7 @@
 {% block content %}
 <div class="result">
     <div class="result-header">
-        <h1>And the winner is ...</h1>
+        <h1 class="winner_title">And the winner is ...</h1>
     </div>
     <div class="result-body">
         <div class="winner">
@@ -80,7 +80,7 @@
                     <td class="{{'red' if winner_stats[4] - loser_stats[4] < 0 else 'green'}}">{{ winner_stats[4] - loser_stats[4] }}</td>
                 </tr>
                 <tr>
-                    <th>Special Defense</th>
+                    <th>Speed</th>
                     <td>{{ winner_stats[5] }}</td>
                     <td>{{ loser_stats[5] }}</td>
                     <td class="{{'red' if winner_stats[5] - loser_stats[5] < 0 else 'green'}}">{{ winner_stats[5] - loser_stats[5] }}</td>

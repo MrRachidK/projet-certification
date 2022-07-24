@@ -140,8 +140,11 @@ class User(UserMixin, db.Model):
 
     def json(self):
         return {'id': self.id, 
-                'username': self.username, 
-                'email': self.email
+                'last_name': self.last_name,
+                'first_name': self.first_name, 
+                'email': self.email,
+                'username': self.username,
+                'password': self.password
                 }
 
     @classmethod

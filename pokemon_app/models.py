@@ -37,7 +37,7 @@ class Pokemon(db.Model):
     def __repr__(self):
         return '<Pokemon %r>' % self.name
 
-    def json(self):
+    def pokemon_json(self):
         return {
             'number': self.number,
             'name': self.name,
@@ -76,7 +76,7 @@ class Combat(db.Model):
     def __repr__(self):
         return '<Combat %r>' % self.id
 
-    def json(self):
+    def combat_json(self):
         return {
             'id': self.id,
             'user_id': self.user_id,
@@ -105,7 +105,7 @@ class Image(db.Model):
     def __repr__(self):
         return '<Image %r>' % self.number
 
-    def json(self):
+    def image_json(self):
         return {
             'number': self.number,
             'image': self.image
@@ -135,17 +135,15 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
-    def json(self):
-        return {'id': self.id, 
-                'last_name': self.last_name,
+    def user_json(self):
+        return {'last_name': self.last_name,
                 'first_name': self.first_name, 
                 'email': self.email,
                 'username': self.username,
-                'password': self.password
                 }
 
     @classmethod
-    def get_by_email(cls, email):
+    def find_by_email(cls, email):
         return cls.query.filter_by(email=email).first()
 
     def save_to_db(self):
@@ -197,3 +195,7 @@ def get_combat_data(user_id):
     df = [c for c in df if c['user_id'] == user_id]
 
     return df
+
+if __name__ == '__main__':
+    init_db()
+    

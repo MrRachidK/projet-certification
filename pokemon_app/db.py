@@ -1,8 +1,5 @@
 import sys 
 import os
-from this import d
-from turtle import st
-from unicodedata import name
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))

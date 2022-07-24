@@ -1,18 +1,11 @@
-from distutils.command.build_scripts import first_line_re
-from hashlib import new
 import sys
 import os
-from turtle import st
-from unicodedata import name
 
-from pokemon_app.auth import login
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from config import basedir
-from flask import render_template, request, redirect, url_for, session, Blueprint, flash
-from flask_login import login_user, login_required, logout_user, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask import render_template, request, redirect, url_for, Blueprint, flash
+from flask_login import login_required, current_user
 import json
 import requests
 

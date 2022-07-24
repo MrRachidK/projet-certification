@@ -1,6 +1,5 @@
 import sys 
 import os
-from this import d
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))

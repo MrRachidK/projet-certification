@@ -184,14 +184,14 @@ def create_dictionaries(data):
 
 def get_mapped_data():
     data = db.session.query(Pokemon).all()
-    df = pd.DataFrame([p.json() for p in data])
+    df = pd.DataFrame([p.pokemon_json() for p in data])
     name_dict, type_dict, stats_dict = create_dictionaries(df)
 
     return name_dict, type_dict, stats_dict
 
 def get_combat_data(user_id):
     data = db.session.query(Combat).all()
-    df = [c.json() for c in data]
+    df = [c.combat_json() for c in data]
     df = [c for c in df if c['user_id'] == user_id]
 
     return df

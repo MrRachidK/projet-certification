@@ -14,8 +14,9 @@ class Config(object):
 
 class ProductionConfig(Config):
     DEBUG = False
-    params = urllib.parse.quote_plus(os.environ['SQLALCHEMY_DATABASE_MSSQL'])
-    SQLALCHEMY_DATABASE_URI = "mssql+pyodbc:///?odbc_connect=%s" % params
+    if os.environ.get('SQLALCHEMY_DATABASE_MSSQL'):
+        params = urllib.parse.quote_plus(os.environ['SQLALCHEMY_DATABASE_MSSQL'])
+        SQLALCHEMY_DATABASE_URI = "mssql+pyodbc:///?odbc_connect=%s" % params
 
 class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')

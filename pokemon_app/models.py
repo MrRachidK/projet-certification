@@ -21,7 +21,7 @@ def convertToBinaryData(filename):
 
 class Pokemon(db.Model):
     __tablename__ = 'pokemon'
-    number = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    number = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     type_1 = db.Column(db.String(255))
     type_2 = db.Column(db.String(255))
@@ -99,7 +99,7 @@ class Combat(db.Model):
 
 class Image(db.Model):
     __tablename__ = 'images'
-    number = db.Column(db.Integer, ForeignKey('pokemon.number'), primary_key=True, autoincrement=True)
+    number = db.Column(db.Integer, ForeignKey('pokemon.number'), primary_key=True)
     image = db.Column(db.LargeBinary)
 
     def __repr__(self):
@@ -164,7 +164,6 @@ def init_db():
     db.create_all()
 
     pokemon_data = pd.read_csv(os.path.join(basedir, 'data/intermediate/pokemon.csv'), index_col=False, delimiter = ',')
-    pokemon_data = pokemon_data.rename(columns={'Sp. Atk': 'sp_atk', 'Sp. Def': 'sp_def'})
     pokemon_data = pokemon_data.drop(['Number'], axis=1)
     pokemon_data.to_sql('pokemon', db.engine, if_exists='append', index=False)    
 

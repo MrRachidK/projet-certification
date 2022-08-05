@@ -97,31 +97,31 @@ class Combat(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-class Image(db.Model):
-    __tablename__ = 'images'
-    number = db.Column(db.Integer, ForeignKey('pokemon.number'), primary_key=True)
-    image = db.Column(db.LargeBinary)
-
-    def __repr__(self):
-        return '<Image %r>' % self.number
-
-    def image_json(self):
-        return {
-            'number': self.number,
-            'image': self.image
-        }
-
-    @classmethod
-    def find_by_number(cls, number):
-        return cls.query.filter_by(number=number).first()
-
-    def save_to_db(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def delete_from_db(self):
-        db.session.delete(self)
-        db.session.commit()
+#class Image(db.Model):
+#    __tablename__ = 'images'
+#    number = db.Column(db.Integer, ForeignKey('pokemon.number'), primary_key=True)
+#    image = db.Column(db.LargeBinary)
+#
+#    def __repr__(self):
+#        return '<Image %r>' % self.number
+#
+#    def image_json(self):
+#        return {
+#            'number': self.number,
+#            'image': self.image
+#        }
+#
+#    @classmethod
+#    def find_by_number(cls, number):
+#        return cls.query.filter_by(number=number).first()
+#
+#    def save_to_db(self):
+#        db.session.add(self)
+#        db.session.commit()
+#
+#    def delete_from_db(self):
+#        db.session.delete(self)
+#        db.session.commit()
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'

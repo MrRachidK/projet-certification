@@ -4,8 +4,6 @@ import tempfile
 import urllib
 from requests import Session
 
-from credentials import password
-
 load_dotenv()
 basedir = os.path.abspath(os.path.dirname(__file__))
 

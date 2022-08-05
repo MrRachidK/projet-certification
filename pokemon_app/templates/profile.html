@@ -37,26 +37,38 @@
             </tr>
             {% for number in range(1, 11) %}
                 <tr>
-                    <td>{{ number}}</td>
+                    <td>{{ number }}</td>
                     <td>
                         {% if combats|length >= number %}
-                            {{ combats[-number]['first_pokemon'] }}
+                            {% for index, value in name_dict.items() %}
+                                {% if index == combats[-number]['first_pokemon'] %}
+                                    {{ name_dict[combats[-number]['first_pokemon']] }}
+                                {% endif %}
+                            {% endfor %}
                         {% else %}
-                            ------------
+                        ------------
                         {% endif %}
                     </td>
                     <td>
                         {% if combats|length >= number %}
-                            {{ combats[-number]['second_pokemon'] }}
+                            {% for index, value in name_dict.items() %}
+                                {% if index == combats[-number]['second_pokemon'] %}
+                                    {{ name_dict[combats[-number]['second_pokemon']] }}
+                                {% endif %}
+                            {% endfor %}
                         {% else %}
-                            ------------
+                        ------------
                         {% endif %}
                     </td>
                     <td>
                         {% if combats|length >= number %}
-                            {{ combats[-number]['winner'] }}
+                            {% for index, value in name_dict.items() %}
+                                {% if index == combats[-number]['winner'] %}
+                                    {{ name_dict[combats[-number]['winner']] }}
+                                {% endif %}
+                            {% endfor %}
                         {% else %}
-                            ------------
+                        ------------
                         {% endif %}
                     </td>
                 </tr>

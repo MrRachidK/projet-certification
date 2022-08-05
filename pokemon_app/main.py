@@ -34,7 +34,6 @@ def home():
     pokemon_1 = request.form.get("first_pokemon")
     pokemon_2 = request.form.get("second_pokemon")
     pokemon_data = {'first_pokemon': pokemon_1, 'second_pokemon': pokemon_2}
-    print(pokemon_data)
     pokemon_json = json.dumps(pokemon_data)
 
     # If a form is submitted
@@ -44,13 +43,19 @@ def home():
             return redirect(url_for("main.home"))
         else :
         # Get prediction
-            url = "https://api-pokemon-arena.azurewebsites.net/get_prediction"
+            # url = "https://api-pokemon-arena.azurewebsites.net/get_prediction"
+            url = "http://localhost:5001/get_prediction"
             prediction = requests.get(url, json=pokemon_json).text
-            print(prediction)
-            new_duel = Combat(user_id = current_user.id, first_pokemon=name_dict[int(pokemon_data['first_pokemon'])], second_pokemon=name_dict[int(pokemon_data['second_pokemon'])], winner=prediction)
+
+            # Get index of prediction from name_dict
+            keys = list(name_dict.keys())
+            values = list(name_dict.values())
+            prediction_index = keys[values.index(prediction)]
+
+            new_duel = Combat(user_id = current_user.id, first_pokemon=pokemon_data['first_pokemon'], second_pokemon=int(pokemon_data['second_pokemon']), winner=prediction_index)
             new_duel.save_to_db()
         
-            return render_template('result.html', pokemon_name = name_dict, pokemon_stats = stats_dict, pokemon_types = type_dict, pokemon_data = pokemon_data, prediction_text = prediction)
+            return render_template('result.html', pokemon_name = name_dict, pokemon_stats = stats_dict, pokemon_types = type_dict, pokemon_data = pokemon_data, prediction_text = prediction, prediction_index = prediction_index)
     else:
         prediction = ""
 
@@ -62,10 +67,13 @@ def home():
 @main.route('/profile')
 @login_required
 def profile():
+    # Get mapped data
+    name_dict, type_dict, stats_dict = get_mapped_data()
+
     # Get combats data
     combats = get_combat_data(current_user.id)
     
-    return render_template("profile.html", combats = combats, last_name=current_user.last_name, first_name=current_user.first_name, username=current_user.username, email=current_user.email)
+    return render_template("profile.html", combats = combats, name_dict = name_dict, last_name=current_user.last_name, first_name=current_user.first_name, username=current_user.username, email=current_user.email)
 
 # Admin
 

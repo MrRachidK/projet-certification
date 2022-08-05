@@ -21,7 +21,7 @@
             {% set loser_stats = [] %}
             {% set loser = [] %}
             {% for index, value in pokemon_name.items() %}
-                {% if value == prediction_text %}
+                {% if index == prediction_index %}
                     {% for stats in pokemon_stats[index] %}
                         {% set winner_stats = winner_stats.append(stats) %}
                     {% endfor %}

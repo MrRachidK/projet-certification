@@ -22,7 +22,7 @@ def convertToBinaryData(filename):
 class Pokemon(db.Model):
     __tablename__ = 'pokemon'
     number = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
+    name = db.Column(db.String(255), primary_key=True)
     type_1 = db.Column(db.String(255))
     type_2 = db.Column(db.String(255))
     hp = db.Column(db.Integer)
@@ -160,7 +160,7 @@ class User(UserMixin, db.Model):
         db.session.commit()
 
 def init_db():
-    db.drop_all()
+    #db.drop_all()
     db.create_all()
 
     pokemon_data = pd.read_csv(os.path.join(basedir, 'data/intermediate/pokemon.csv'), index_col=False, delimiter = ',')

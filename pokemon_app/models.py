@@ -21,7 +21,7 @@ def convertToBinaryData(filename):
 
 class Pokemon(db.Model):
     __tablename__ = 'pokemon'
-    number = db.Column(db.String(255), primary_key=True)
+    number = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     type_1 = db.Column(db.String(255))
     type_2 = db.Column(db.String(255))

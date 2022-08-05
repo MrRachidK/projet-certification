@@ -34,6 +34,7 @@ def home():
     pokemon_1 = request.form.get("first_pokemon")
     pokemon_2 = request.form.get("second_pokemon")
     pokemon_data = {'first_pokemon': pokemon_1, 'second_pokemon': pokemon_2}
+    print(pokemon_data)
     pokemon_json = json.dumps(pokemon_data)
 
     # If a form is submitted
@@ -45,6 +46,7 @@ def home():
         # Get prediction
             url = "https://api-pokemon-arena.azurewebsites.net/get_prediction"
             prediction = requests.get(url, json=pokemon_json).text
+            print(prediction)
             new_duel = Combat(user_id = current_user.id, first_pokemon=name_dict[int(pokemon_data['first_pokemon'])], second_pokemon=name_dict[int(pokemon_data['second_pokemon'])], winner=prediction)
             new_duel.save_to_db()
         

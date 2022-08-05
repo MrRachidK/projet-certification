@@ -126,7 +126,7 @@ class Image(db.Model):
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    last_name = db.Column(db.String(255), )
+    last_name = db.Column(db.String(255))
     first_name = db.Column(db.String(255))
     email = db.Column(db.String(255))
     username = db.Column(db.String(255))
@@ -136,7 +136,8 @@ class User(UserMixin, db.Model):
         return '<User %r>' % self.username
 
     def user_json(self):
-        return {'last_name': self.last_name,
+        return {'id': self.id,
+                'last_name': self.last_name,
                 'first_name': self.first_name, 
                 'email': self.email,
                 'username': self.username,
@@ -145,6 +146,10 @@ class User(UserMixin, db.Model):
     @classmethod
     def find_by_email(cls, email):
         return cls.query.filter_by(email=email).first()
+
+    @classmethod
+    def find_by_id(cls, id):
+        return cls.query.filter_by(id=id).first()
 
     def save_to_db(self):
         db.session.add(self)
@@ -193,6 +198,13 @@ def get_combat_data(user_id):
     data = db.session.query(Combat).all()
     df = [c.combat_json() for c in data]
     df = [c for c in df if c['user_id'] == user_id]
+
+    return df
+
+def get_user_data():
+    data = db.session.query(User).all()
+    df = [u.user_json() for u in data]
+    print(df)
 
     return df
 

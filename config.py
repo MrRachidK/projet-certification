@@ -1,10 +1,14 @@
 import os
 from dotenv import load_dotenv
 import tempfile
-
+import urllib
 from requests import Session
+
+from credentials import password
+
 load_dotenv()
 basedir = os.path.abspath(os.path.dirname(__file__))
+os.environ['SQLALCHEMY_DATABASE_MSSQL'] = "Driver={ODBC Driver 17 for SQL Server};Server=tcp:rachidkarbiche.database.windows.net,1433;Initial Catalog=pokemon_arena;Persist Security Info=False;User ID=rachidk;Password=%s;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" % password
 
 class Config(object):
     TESTING = False
@@ -13,7 +17,8 @@ class Config(object):
 
 class ProductionConfig(Config):
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = 'Ma base de données en prod'
+    params = urllib.parse.quote_plus(os.environ['SQLALCHEMY_DATABASE_MSSQL'])
+    SQLALCHEMY_DATABASE_URI = "mssql+pyodbc:///?odbc_connect=%s" % params
 
 class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')

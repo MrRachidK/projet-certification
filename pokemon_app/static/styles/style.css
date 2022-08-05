@@ -125,6 +125,38 @@ div.stats {
     padding: 5px 5px;
 }
 
+/* Admin page */
+
+.content .admin_table table td:first-child, .content .admin > div table td:first-child {
+	font-weight: bold;
+	color: #4a536e;
+	padding-right: 15px;
+}
+
+.content .admin_table table {
+    width: 80%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    position: relative;
+    top:50px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.content .admin_table th {
+    border: 1px solid rgb(190,190,190);
+    text-align: center;
+    padding: 5px 5px;
+}
+
+.content .admin_table td {
+    border: 1px solid rgb(190,190,190);
+    text-align: center;
+    padding: 5px 5px;
+}
+
 /* Result page */
 
 .content .result {

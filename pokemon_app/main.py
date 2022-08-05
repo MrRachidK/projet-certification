@@ -10,7 +10,7 @@ from flask_login import login_required, current_user
 import json
 import requests
 
-from pokemon_app.models import db, Combat, get_mapped_data, get_combat_data, init_db
+from pokemon_app.models import db, Combat, User, get_mapped_data, get_combat_data, get_user_data, init_db
 
 from .utils import admin_required
 
@@ -71,4 +71,37 @@ def profile():
 @admin_required
 @login_required
 def admin():
-    return render_template("admin.html")
+    # Get all the users in the database
+    users = get_user_data()
+
+    return render_template("admin.html", users = users)
+
+@main.route('/admin/update_user', methods=['GET'])
+@admin_required
+@login_required
+def update_user():
+    user_id = request.args.get('user_id')
+    user = User.query.get(user_id)
+
+    return render_template("update_user.html", user = user)
+
+@main.route('/admin/update_user', methods=['POST'])
+@admin_required
+@login_required
+def update_user_post():
+    # Get the user id
+    user_id = request.args.get('user_id')
+    # Get the user data
+    user = User.find_by_id(user_id)
+    # Get the user data from the form
+    user.last_name = request.form.get("last_name")
+    user.first_name = request.form.get("first_name")
+    user.email = request.form.get("email")
+    user.username = request.form.get("username")
+
+    user.save_to_db()
+
+    flash("User updated successfully !")
+
+    return redirect(url_for("main.admin"))
+

@@ -160,7 +160,7 @@ class User(UserMixin, db.Model):
         db.session.commit()
 
 def init_db():
-    #db.drop_all()
+    db.drop_all()
     db.create_all()
 
     pokemon_data = pd.read_csv(os.path.join(basedir, 'data/intermediate/pokemon.csv'), index_col=False, delimiter = ',')

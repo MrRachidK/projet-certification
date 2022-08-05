@@ -21,7 +21,7 @@ def convertToBinaryData(filename):
 
 class Pokemon(db.Model):
     __tablename__ = 'pokemon'
-    number = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.String(255), primary_key=True)
     name = db.Column(db.String(255))
     type_1 = db.Column(db.String(255))
     type_2 = db.Column(db.String(255))
@@ -69,9 +69,9 @@ class Combat(db.Model):
     __tablename__ = 'combats'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, ForeignKey('users.id'))
-    first_pokemon = db.Column(db.String(255), ForeignKey('pokemon.number'))
-    second_pokemon = db.Column(db.String(255), ForeignKey('pokemon.number'))
-    winner = db.Column(db.String(255), ForeignKey('pokemon.number'))
+    first_pokemon = db.Column(db.String(255), ForeignKey('pokemon.name'))
+    second_pokemon = db.Column(db.String(255), ForeignKey('pokemon.name'))
+    winner = db.Column(db.String(255), ForeignKey('pokemon.name'))
 
     def __repr__(self):
         return '<Combat %r>' % self.id

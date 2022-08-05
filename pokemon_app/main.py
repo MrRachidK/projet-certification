@@ -43,8 +43,7 @@ def home():
             return redirect(url_for("main.home"))
         else :
         # Get prediction
-            # url = "https://api-pokemon-arena.azurewebsites.net/get_prediction"
-            url = "http://localhost:5001/get_prediction"
+            url = "https://api-pokemon-arena.azurewebsites.net/get_prediction"
             prediction = requests.get(url, json=pokemon_json).text
 
             # Get index of prediction from name_dict

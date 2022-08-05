@@ -13,11 +13,11 @@ import logging as lg
 
 db = SQLAlchemy()
 
-def convertToBinaryData(filename):
-    # Convert digital data to binary format
-    with open(filename, 'rb') as file:
-        binaryData = file.read()
-    return binaryData
+#def convertToBinaryData(filename):
+#    # Convert digital data to binary format
+#    with open(filename, 'rb') as file:
+#        binaryData = file.read()
+#    return binaryData
 
 class Pokemon(db.Model):
     __tablename__ = 'pokemon'
@@ -167,10 +167,10 @@ def init_db():
     pokemon_data = pokemon_data.drop(['Number'], axis=1)
     pokemon_data.to_sql('pokemon', db.engine, if_exists='append', index=False)    
 
-    for i in range(1, 801):
-        image = convertToBinaryData(os.path.join(basedir, 'data/raw/images/{}.png'.format(i)))
-        image_db = Image(image=image)
-        image_db.save_to_db()
+    #for i in range(1, 801):
+    #    image = convertToBinaryData(os.path.join(basedir, 'data/raw/images/{}.png'.format(i)))
+    #    image_db = Image(image=image)
+    #    image_db.save_to_db()
 
     lg.info('Database initialized')
 

@@ -6,9 +6,9 @@ from pokemon_app.models import User, db, init_db
 
 auth = Blueprint('auth', __name__)
 
-@auth.before_app_first_request
-def load_data():
-    init_db()
+# @auth.before_app_first_request
+# def load_data():
+#     init_db()
 
 # Login
 

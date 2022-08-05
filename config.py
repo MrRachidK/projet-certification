@@ -8,7 +8,6 @@ from credentials import password
 
 load_dotenv()
 basedir = os.path.abspath(os.path.dirname(__file__))
-os.environ['SQLALCHEMY_DATABASE_MSSQL'] = "Driver={ODBC Driver 17 for SQL Server};Server=tcp:rachidkarbiche.database.windows.net,1433;Initial Catalog=pokemon_arena;Persist Security Info=False;User ID=rachidk;Password=%s;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" % password
 
 class Config(object):
     TESTING = False

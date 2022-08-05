@@ -21,7 +21,7 @@ def convertToBinaryData(filename):
 
 class Pokemon(db.Model):
     __tablename__ = 'pokemon'
-    number = db.Column(db.Integer, primary_key=True, autoincrement=False)
+    number = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255))
     type_1 = db.Column(db.String(255))
     type_2 = db.Column(db.String(255))
@@ -67,7 +67,7 @@ class Pokemon(db.Model):
 
 class Combat(db.Model):
     __tablename__ = 'combats'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=False)
+    id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, ForeignKey('users.id'))
     first_pokemon = db.Column(db.Integer, ForeignKey('pokemon.number'))
     second_pokemon = db.Column(db.Integer, ForeignKey('pokemon.number'))
@@ -99,7 +99,7 @@ class Combat(db.Model):
 
 class Image(db.Model):
     __tablename__ = 'images'
-    number = db.Column(db.Integer, ForeignKey('pokemon.number'), primary_key=True)
+    number = db.Column(db.Integer, ForeignKey('pokemon.number'), primary_key=True, autoincrement=True)
     image = db.Column(db.LargeBinary)
 
     def __repr__(self):
@@ -165,11 +165,12 @@ def init_db():
 
     pokemon_data = pd.read_csv(os.path.join(basedir, 'data/intermediate/pokemon.csv'), index_col=False, delimiter = ',')
     pokemon_data = pokemon_data.rename(columns={'Sp. Atk': 'sp_atk', 'Sp. Def': 'sp_def'})
+    pokemon_data = pokemon_data.drop(['Number'], axis=1)
     pokemon_data.to_sql('pokemon', db.engine, if_exists='append', index=False)    
 
     for i in range(1, 801):
         image = convertToBinaryData(os.path.join(basedir, 'data/raw/images/{}.png'.format(i)))
-        image_db = Image(number=i, image=image)
+        image_db = Image(image=image)
         image_db.save_to_db()
 
     lg.info('Database initialized')
@@ -191,6 +192,7 @@ def get_mapped_data():
     data = db.session.query(Pokemon).all()
     df = pd.DataFrame([p.pokemon_json() for p in data])
     name_dict, type_dict, stats_dict = create_dictionaries(df)
+    print(name_dict)
 
     return name_dict, type_dict, stats_dict
 

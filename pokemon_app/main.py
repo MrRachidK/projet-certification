@@ -12,8 +12,6 @@ import requests
 
 from pokemon_app.models import db, Combat, User, get_mapped_data, get_combat_data, get_user_data, init_db
 
-from .utils import admin_required
-
 main = Blueprint('main', __name__)
 
 @main.before_app_first_request
@@ -77,40 +75,47 @@ def profile():
 # Admin
 
 @main.route('/admin')
-@admin_required
 @login_required
 def admin():
-    # Get all the users in the database
-    users = get_user_data()
+    if current_user.role == "admin":
+        # Get all the users in the database
+        users = get_user_data()
+        return render_template("admin.html", users = users)
 
-    return render_template("admin.html", users = users)
-
+    flash("You don't have permission to access this resource", "alert")
+    return redirect(url_for("main.home"))
+    
 @main.route('/admin/update_user', methods=['GET'])
-@admin_required
 @login_required
 def update_user():
-    user_id = request.args.get('user_id')
-    user = User.query.get(user_id)
+    if current_user.role == "admin":
+        user_id = request.args.get('user_id')
+        user = User.query.get(user_id)
+        return render_template("update_user.html", user = user)
 
-    return render_template("update_user.html", user = user)
+    flash("You don't have permission to access this resource", "alert")
+    return redirect(url_for("main.home"))
 
 @main.route('/admin/update_user', methods=['POST'])
-@admin_required
 @login_required
 def update_user_post():
-    # Get the user id
-    user_id = request.args.get('user_id')
-    # Get the user data
-    user = User.find_by_id(user_id)
-    # Get the user data from the form
-    user.last_name = request.form.get("last_name")
-    user.first_name = request.form.get("first_name")
-    user.email = request.form.get("email")
-    user.username = request.form.get("username")
+    if current_user.role == "admin":
+        # Get the user id
+        user_id = request.args.get('user_id')
+        # Get the user data
+        user = User.find_by_id(user_id)
+        # Get the user data from the form
+        user.last_name = request.form.get("last_name")
+        user.first_name = request.form.get("first_name")
+        user.email = request.form.get("email")
+        user.username = request.form.get("username")
 
-    user.save_to_db()
+        user.save_to_db()
 
-    flash("User updated successfully !")
+        flash("User updated successfully !")
 
-    return redirect(url_for("main.admin"))
+        return redirect(url_for("main.admin"))
+
+    flash("You don't have permission to access this resource", "alert")
+    return redirect(url_for("main.home"))
 

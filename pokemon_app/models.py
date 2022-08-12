@@ -10,6 +10,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
 from flask_login import UserMixin
 import logging as lg
+from werkzeug.security import generate_password_hash
+from decouple import config
 
 db = SQLAlchemy()
 
@@ -131,6 +133,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(255))
     username = db.Column(db.String(255))
     password = db.Column(db.String(255))
+    role = db.Column(db.String(255))
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -141,6 +144,7 @@ class User(UserMixin, db.Model):
                 'first_name': self.first_name, 
                 'email': self.email,
                 'username': self.username,
+                'role': self.role
                 }
 
     @classmethod
@@ -167,10 +171,9 @@ def init_db():
     pokemon_data = pokemon_data.drop(['Number'], axis=1)
     pokemon_data.to_sql('pokemon', db.engine, if_exists='append', index=False)    
 
-    #for i in range(1, 801):
-    #    image = convertToBinaryData(os.path.join(basedir, 'data/raw/images/{}.png'.format(i)))
-    #    image_db = Image(image=image)
-    #    image_db.save_to_db()
+    # Create admin user
+    admin = User(last_name=config('ADMIN_LAST_NAME'), first_name=config('ADMIN_FIRST_NAME'), email=config('ADMIN_EMAIL'), username=config('ADMIN_USERNAME'), password=generate_password_hash(config('ADMIN_PASSWORD'), method='sha256'), role='admin')   
+    admin.save_to_db()
 
     lg.info('Database initialized')
 
@@ -191,7 +194,6 @@ def get_mapped_data():
     data = db.session.query(Pokemon).all()
     df = pd.DataFrame([p.pokemon_json() for p in data])
     name_dict, type_dict, stats_dict = create_dictionaries(df)
-    print(name_dict)
 
     return name_dict, type_dict, stats_dict
 
@@ -205,7 +207,6 @@ def get_combat_data(user_id):
 def get_user_data():
     data = db.session.query(User).all()
     df = [u.user_json() for u in data]
-    print(df)
 
     return df
 

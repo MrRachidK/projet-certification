@@ -6,9 +6,9 @@ from pokemon_app.models import User, db, init_db
 
 auth = Blueprint('auth', __name__)
 
-# @auth.before_app_first_request
-# def load_data():
-#     init_db()
+@auth.before_app_first_request
+def load_data():
+    init_db()
 
 # Login
 
@@ -69,7 +69,7 @@ def signup_post():
         return redirect(url_for('auth.signup'))
 
     # create a new user with the form data. Hash the password so the plaintext version isn't saved.
-    new_user = User(last_name=last_name, first_name=first_name, email=email, username=username, password=generate_password_hash(password, method='sha256'))
+    new_user = User(last_name=last_name, first_name=first_name, email=email, username=username, password=generate_password_hash(password, method='sha256'), role='user')
 
     # add the new user to the database
     new_user.save_to_db()

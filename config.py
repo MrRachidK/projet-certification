@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 import tempfile
 import urllib
-from requests import Session
 
 load_dotenv()
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -23,7 +22,7 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     db_fd, db_path = tempfile.mkstemp()
-    SQLALCHEMY_DATABASE_URI = "sqlite:///" + db_path
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + db_path
     TESTING = True
     LIVESERVER_PORT = 8943
     LIVESERVER_TIMEOUT = 10

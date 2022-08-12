@@ -9,15 +9,15 @@ from dotenv import load_dotenv
 
 from .models import init_db
 
-def create_app(mode = "development"):
+def create_app(mode='development'):
 
     # Upload env variables
     load_dotenv()
 
     # Create app
     app = Flask(__name__, instance_relative_config=True)
-    app.secret_key = 'super secret key'
-    
+    app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+
     # Select config
     if mode == "development":
         app.config.from_object('config.DevelopmentConfig')

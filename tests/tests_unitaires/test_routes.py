@@ -113,7 +113,7 @@ def test_home_get_not_logged(client):
 
 def test_home_get(client):
     route = "/home"
-    _login_user(client, config('ADMIN_EMAIL'), config('ADMIN_PASSWORD'))
+    _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
     response = client.get(route)
     assert response.status_code == 200
     assert b"Home" in response.data
@@ -122,7 +122,7 @@ def test_home_get(client):
 
 def test_home_post_logged(client):
     route = "/home"
-    _login_user(client, config('ADMIN_EMAIL'), config('ADMIN_PASSWORD'))
+    _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
     pokemon_name = {1: 'Bulbasaur', 2: 'Ivysaur'}
     pokemon_stats = {1: [45, 49, 49, 65, 65, 45, False], 2: [60, 62, 63, 80, 80, 60, False]}
     pokemon_types = {1: ['Grass', 'Poison'], 2: ['Grass', 'Poison']}
@@ -173,7 +173,7 @@ def test_admin_not_logged(client):
 
 def test_admin_logged(client):
     route = "/admin"
-    _login_user(client, config('ADMIN_EMAIL'), config('ADMIN_PASSWORD'))
+    _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
     response = client.get(route)
     assert response.status_code == 200
 
@@ -210,7 +210,7 @@ def test_update_user_logged_user(client):
 def test_update_user_logged_admin(client):
     route = "/admin/update_user"
     _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
-    _login_user(client, config('ADMIN_EMAIL'), config('ADMIN_PASSWORD'))
+    _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
     response = client.get(route, follow_redirects=True)
     assert response.status_code == 200
 

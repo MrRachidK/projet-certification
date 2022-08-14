@@ -9,7 +9,9 @@ from pokemon_app.models import User
 from flask_login import current_user
 from werkzeug.security import check_password_hash
 from decouple import config
+import requests
 
+# Functions for tests
 
 def _login_user(client, email, password):
     response = client.post(
@@ -30,14 +32,7 @@ def _logout_user(client):
     assert response.status_code == 200
 
 
-##################### Test des routes de main #####################
-
-### Test de Index
-
-def test_home(client):
-    route = "/home"
-    response = client.get(route)
-    assert response.status_code == 302
+##################### Tests de l'authentification #####################
 
 # Test de Login
 
@@ -102,6 +97,44 @@ def test_logout_get(client):
     assert response.status_code == 200
     assert response.request.path == "/login"
 
+##################### Tests des différentes routes de main #####################
+
+### Test de Home - GET
+
+# Home sans être connecté
+
+def test_home_get_not_logged(client):
+    route = "/home"
+    response = client.get(route, follow_redirects=True)
+    assert response.status_code == 200
+    assert response.request.path == "/login"
+
+# Home en étant connecté
+
+def test_home_get(client):
+    route = "/home"
+    _login_user(client, config('ADMIN_EMAIL'), config('ADMIN_PASSWORD'))
+    response = client.get(route)
+    assert response.status_code == 200
+    assert b"Home" in response.data
+
+### Test de Home - POST
+
+def test_home_post_logged(client):
+    route = "/home"
+    _login_user(client, config('ADMIN_EMAIL'), config('ADMIN_PASSWORD'))
+    pokemon_name = {1: 'Bulbasaur', 2: 'Ivysaur'}
+    pokemon_stats = {1: [45, 49, 49, 65, 65, 45, False], 2: [60, 62, 63, 80, 80, 60, False]}
+    pokemon_types = {1: ['Grass', 'Poison'], 2: ['Grass', 'Poison']}
+    pokemon_data = {'first_pokemon': '1', 'second_pokemon': '2'}
+    prediction_text = "Ivysaur"
+    prediction_index = 2
+    data_to_send = dict(pokemon_name=pokemon_name, pokemon_stats=pokemon_stats, pokemon_types=pokemon_types, pokemon_data=pokemon_data, prediction_text=prediction_text, prediction_index=prediction_index)
+    response = client.post(route, data=data_to_send, follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Ivysaur" in response.data
+    
+
 ### Test de Profile sans être connecté
 
 def test_profile_not_logged(client):
@@ -128,6 +161,14 @@ def test_profile_logged(client):
         assert response.status_code == 200
         assert response.request.path == "/profile"
 
+# Test de Admin sans être connecté
+
+def test_admin_not_logged(client):
+    route = "/admin"
+    response = client.get(route, follow_redirects=True)
+    assert response.status_code == 200
+    assert response.request.path == "/login"
+
 # Test de Admin en étant connecté
 
 def test_admin_logged(client):
@@ -145,6 +186,47 @@ def test_blocked_admin(client):
     response = client.get(route, follow_redirects=True)
     assert response.status_code == 200
     assert response.request.path == "/home"
+
+# Test de la modification d'un utilisateur sans être connecté
+
+def test_update_user_not_logged(client):
+    route = "/admin/update_user"
+    response = client.get(route, follow_redirects=True)
+    assert response.status_code == 200
+    assert response.request.path == "/login"
+
+# Test de la modification d'un utilisateur en étant connecté comme non admin
+
+def test_update_user_logged_user(client):
+    route = "/admin/update_user"
+    _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
+    _login_user(client, "test@example.com", "123")
+    response = client.get(route, follow_redirects=True)
+    assert response.status_code == 200
+    assert response.request.path == "/home"
+
+# Test de la modification d'un utilisateur en étant connecté comme admin - GET
+
+def test_update_user_logged_admin(client):
+    route = "/admin/update_user"
+    _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
+    _login_user(client, config('ADMIN_EMAIL'), config('ADMIN_PASSWORD'))
+    response = client.get(route, follow_redirects=True)
+    assert response.status_code == 200
+
+# Test de la modification d'un utilisateur en étant connecté comme admin - POST
+
+""" def test_update_user_logged_admin_post(client):
+    route = "/admin/update_user"
+    _login_user(client, config('ADMIN_EMAIL'), config('ADMIN_PASSWORD'))
+    data_to_send = dict(email="test@example.com")
+    response = client.post(route, data=data_to_send, follow_redirects=True)
+    assert response.status_code == 200
+    assert response.request.path == "/admin" """
+
+
+
+
 
     
     

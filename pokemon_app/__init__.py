@@ -6,6 +6,8 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 from .models import init_db
 
@@ -13,6 +15,18 @@ def create_app(mode='development'):
 
     # Upload env variables
     load_dotenv()
+
+    sentry_sdk.init(
+        dsn="https://e519098cadb945139dc117c34caf4fbe@o1360069.ingest.sentry.io/6647818",
+        integrations=[
+            FlaskIntegration(),
+    ],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0
+)
 
     # Create app
     app = Flask(__name__, instance_relative_config=True)

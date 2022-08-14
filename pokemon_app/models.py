@@ -171,7 +171,7 @@ def init_db():
     pokemon_data.to_sql('pokemon', db.engine, if_exists='append', index=False)    
 
     # Create admin user
-    admin = User(last_name=config('ADMIN_LAST_NAME'), first_name=config('ADMIN_FIRST_NAME'), email=config('ADMIN_EMAIL'), username=config('ADMIN_USERNAME'), password=generate_password_hash(config('ADMIN_PASSWORD'), method='sha256'), role='admin')   
+    admin = User(last_name=os.environ['ADMIN_LAST_NAME'], first_name=os.environ['ADMIN_FIRST_NAME'], email=os.environ['ADMIN_EMAIL'], username=os.environ['ADMIN_USERNAME'], password=generate_password_hash(os.environ['ADMIN_PASSWORD'], method='sha256'), role='admin')   
     admin.save_to_db()
 
     lg.info('Database initialized')

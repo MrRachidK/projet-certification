@@ -8,7 +8,6 @@ from flask import session
 from pokemon_app.models import User
 from flask_login import current_user
 from werkzeug.security import check_password_hash
-from decouple import config
 import requests
 
 # Functions for tests

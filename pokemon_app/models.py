@@ -11,7 +11,6 @@ from sqlalchemy import ForeignKey
 from flask_login import UserMixin
 import logging as lg
 from werkzeug.security import generate_password_hash
-from decouple import config
 
 db = SQLAlchemy()
 

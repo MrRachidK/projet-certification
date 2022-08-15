@@ -52,11 +52,29 @@ def home():
             new_duel = Combat(user_id = current_user.id, first_pokemon=pokemon_data['first_pokemon'], second_pokemon=int(pokemon_data['second_pokemon']), winner=prediction_index)
             new_duel.save_to_db()
         
-            return render_template('result.html', pokemon_name = name_dict, pokemon_stats = stats_dict, pokemon_types = type_dict, pokemon_data = pokemon_data, prediction_text = prediction, prediction_index = prediction_index)
+            return redirect(url_for('main.result', pokemon_json = pokemon_json, prediction_text = prediction, prediction_index = prediction_index))
     else:
         prediction = ""
 
     return render_template("home.html", pokemon_name = name_dict, pokemon_stats = stats_dict, pokemon_types = type_dict)
+
+# Result page
+
+@main.route('/result', methods=['GET'])
+@login_required
+def result():
+    # Get pokemon data as a dictionary
+    pokemon_data = request.args.get('pokemon_json')
+    pokemon_data = json.loads(pokemon_data)
+    prediction_text = request.args.get('prediction_text')
+    prediction_index = request.args.get('prediction_index', type=int)
+    
+    # Get mapped results
+    name_dict, type_dict, stats_dict = get_mapped_data()
+    pokemon_name = name_dict 
+    pokemon_stats = stats_dict 
+    pokemon_types = type_dict
+    return render_template('result.html', pokemon_data = pokemon_data, prediction_text = prediction_text, prediction_index = prediction_index, pokemon_name = pokemon_name, pokemon_stats = pokemon_stats, pokemon_types = pokemon_types)
 
 
 # Profile
@@ -119,3 +137,32 @@ def update_user_post():
     flash("You don't have permission to access this resource", "alert")
     return redirect(url_for("main.home"))
 
+@main.route('/admin/delete_user', methods=['GET'])
+@login_required
+def delete_user():
+    if current_user.role == "admin":
+        user_id = request.args.get('user_id')
+        user = User.query.get(user_id)
+
+        return render_template("delete_user.html", user = user)
+
+    flash("You don't have permission to access this resource", "alert")
+    return redirect(url_for("main.home"))
+
+@main.route('/admin/delete_user', methods=['POST'])
+@login_required
+def delete_user_post():
+    if current_user.role == "admin":
+        # Get the user id
+        user_id = request.args.get('user_id')
+        # Get the user data
+        user = User.find_by_id(user_id)
+        # Delete the user
+        user.delete_from_db()
+
+        flash("User deleted successfully !")
+
+        return redirect(url_for("main.admin"))
+
+    flash("You don't have permission to access this resource", "alert")
+    return redirect(url_for("main.home"))

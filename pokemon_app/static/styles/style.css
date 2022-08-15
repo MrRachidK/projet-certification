@@ -157,6 +157,53 @@ div.stats {
     padding: 5px 5px;
 }
 
+.content .admin_table td .update_user {
+    margin-left: 10px;
+    color: blue;
+}
+
+.content .admin_table td .delete_user {
+    margin-left: 10px;
+    color: red;
+}
+
+/* Update User page */
+
+.content .update_title {
+    margin-left: -2%;
+    font-size: 26px;
+    color: #4a536e;
+    text-align: center;
+}
+
+.content .update_form {
+    width: 50%;
+    margin: auto;
+    display: block
+}
+
+/* Delete User page */
+
+.content .delete_title {
+    margin-left: -2%;
+    font-size: 26px;
+    color: #4a536e;
+    text-align: center;
+}
+
+.content .delete_sentence {
+    margin-left: -2%;
+    font-size: 20px;
+    color: #4a536e;
+    text-align: center;
+}
+
+.content .delete_form {
+    width: 50%;
+    margin: auto;
+    display: block
+}
+
 /* Result page */
 
 .content .result {

@@ -9,6 +9,8 @@ from pokemon_app.models import User
 from flask_login import current_user
 from werkzeug.security import check_password_hash
 import requests
+import json
+
 
 # Functions for tests
 
@@ -117,22 +119,51 @@ def test_home_get(client):
     assert response.status_code == 200
     assert b"Home" in response.data
 
+### Test du choix de mêmes Pokémon - POST
+
+def test_choose_same_pokemon_post(client):
+    route = "/home"
+    _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
+    pokemon_data = {'first_pokemon': '1', 'second_pokemon': '1'}
+    prediction_text = "Ivysaur"
+    prediction_index = 2
+    data_to_send = dict(pokemon_data=pokemon_data, prediction_text=prediction_text, prediction_index=prediction_index)
+    response = client.post(route, data=data_to_send, follow_redirects=True)
+    assert response.status_code == 200
+    assert response.request.path == "/home"
+
 ### Test de Home - POST
 
 def test_home_post_logged(client):
     route = "/home"
     _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
-    pokemon_name = {1: 'Bulbasaur', 2: 'Ivysaur'}
-    pokemon_stats = {1: [45, 49, 49, 65, 65, 45, False], 2: [60, 62, 63, 80, 80, 60, False]}
-    pokemon_types = {1: ['Grass', 'Poison'], 2: ['Grass', 'Poison']}
     pokemon_data = {'first_pokemon': '1', 'second_pokemon': '2'}
     prediction_text = "Ivysaur"
     prediction_index = 2
-    data_to_send = dict(pokemon_name=pokemon_name, pokemon_stats=pokemon_stats, pokemon_types=pokemon_types, pokemon_data=pokemon_data, prediction_text=prediction_text, prediction_index=prediction_index)
+    data_to_send = dict(pokemon_data=pokemon_data, prediction_text=prediction_text, prediction_index=prediction_index)
     response = client.post(route, data=data_to_send, follow_redirects=True)
     assert response.status_code == 200
     assert b"Ivysaur" in response.data
     
+### Test de Result - GET
+
+def test_result_get(client, requests_mock):
+    route = "/result"
+    url = "http://127.0.0.1:5000/result"
+    _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
+    with client.application.app_context():
+        pokemon_data = {"first_pokemon": "1", "second_pokemon": "2"}
+        prediction_text = "Ivysaur"
+        prediction_index = "2"
+        requests_mock.get(url, json={"pokemon_json": pokemon_data, "prediction_text": prediction_text, "prediction_index": prediction_index})
+        r = requests.get(url)
+        pokemon_json = r.json()["pokemon_json"]
+        prediction_text = r.json()["prediction_text"]
+        prediction_index = r.json()["prediction_index"]
+        
+        assert {'first_pokemon': '1', 'second_pokemon': '2'} == pokemon_json
+        assert "2" == prediction_index
+        assert "Ivysaur" == prediction_text
 
 ### Test de Profile sans être connecté
 
@@ -212,27 +243,62 @@ def test_update_user_logged_admin(client):
     _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
     response = client.get(route, follow_redirects=True)
     assert response.status_code == 200
+    assert response.request.path == "/admin/update_user"
 
 # Test de la modification d'un utilisateur en étant connecté comme admin - POST
 
-""" def test_update_user_logged_admin_post(client):
-    route = "/admin/update_user"
-    _login_user(client, config('ADMIN_EMAIL'), config('ADMIN_PASSWORD'))
-    data_to_send = dict(email="test@example.com")
-    response = client.post(route, data=data_to_send, follow_redirects=True)
+def test_update_user_logged_admin_post(client):
+    with client.application.app_context():
+        _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
+        user_id = 1
+        print(user_id)
+        user = User.find_by_id(user_id)
+        print(user)
+        first_name = "Toto"
+        data_to_send = {"first_name": first_name}
+        response = client.post(f"/admin/update_user?user_id={user.id}", data = data_to_send, follow_redirects=True)
+        assert response.status_code == 200
+        assert response.request.path == "/admin"
+        assert User.query.filter(User.first_name == "Toto").first()
+
+# Test de la suppression d'un utilisateur sans être connecté
+
+def test_delete_user_not_logged(client):
+    route = "/admin/delete_user"
+    response = client.get(route, follow_redirects=True)
     assert response.status_code == 200
-    assert response.request.path == "/admin" """
+    assert response.request.path == "/login"
 
+# Test de la suppression d'un utilisateur en étant connecté comme non admin
 
+def test_delete_user_logged_user(client):
+    route = "/admin/delete_user"
+    _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
+    _login_user(client, "test@example.com", "123")
+    response = client.get(route, follow_redirects=True)
+    assert response.status_code == 200
+    assert response.request.path == "/home"
 
+# Test de la suppression d'un utilisateur en étant connecté comme admin - GET
 
+def test_delete_user_logged_admin(client):
+    route = "/admin/delete_user"
+    _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
+    _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
+    response = client.get(route, follow_redirects=True)
+    assert response.status_code == 200
+    assert response.request.path == "/admin/delete_user"
 
-    
-    
+# Test de la suppression d'un utilisateur en étant connecté comme admin - POST
 
-    
-
-
-
-
+def test_delete_user_logged_admin_post(client):
+    with client.application.app_context():
+        _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
+        _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
+        user_id = 2
+        user = User.find_by_id(user_id)
+        response = client.post(f"/admin/delete_user?user_id={user.id}", follow_redirects=True)
+        assert response.status_code == 200
+        assert response.request.path == "/admin"
+        assert not User.query.filter(User.id == user_id).first()
 

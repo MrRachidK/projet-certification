@@ -4,9 +4,9 @@
 
 {% block content %}
 
-<h2>Update a user</h2>
+<h2 class="update_title">Update a user</h2>
 
-    <form action="{{ url_for('main.update_user', user_id=user.id) }}" method="post">
+    <form action="{{ url_for('main.update_user', user_id=user.id) }}" method="post" class="update_form">
         <div class="form-group">
             <label for="last_name">Last Name</label>
             <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">

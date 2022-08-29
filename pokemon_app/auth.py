@@ -10,6 +10,10 @@ auth = Blueprint('auth', __name__)
 def load_data():
     init_db()
 
+@auth.route('/', methods=['GET'])
+def goto_login():
+    return redirect(url_for('auth.login'))
+
 # Login
 
 @auth.route('/login', methods=['GET'])

@@ -12,7 +12,7 @@ import requests
 import json
 
 
-# Functions for tests
+# Fonctions pour la réalisation des tests
 
 def _login_user(client, email, password):
     response = client.post(
@@ -39,6 +39,7 @@ def _logout_user(client):
 
 ### Test de Login - GET
 
+# Unitaire
 def test_login_get(client):
     route = "/login"
     response = client.get(route)
@@ -47,10 +48,12 @@ def test_login_get(client):
 
 ### Test de Login - POST
 
+# Fonctionnel
 def test_login_post_success(client):
     _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
     _login_user(client, "test@example.com", "123")
 
+# Fonctionnel
 def test_login_post_fail(client):
     _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
     route = "/login"
@@ -58,6 +61,7 @@ def test_login_post_fail(client):
     assert response.status_code == 200
     assert b"Please check your login details and try again." in response.data
 
+# Fonctionnel
 def test_login_post_fail_no_user(client):
     route = "/login"
     response = client.post(route, data=dict(email="test@example.com", password="123"), follow_redirects=True)
@@ -68,6 +72,7 @@ def test_login_post_fail_no_user(client):
 
 ### Test de Signup - GET
 
+# Unitaire
 def test_signup_get(client):
     route = "/signup"
     response = client.get(route)
@@ -76,9 +81,11 @@ def test_signup_get(client):
 
 ### Test de Signup - POST
 
+# Fonctionnel
 def test_signup_post_success(client):
     _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
 
+# Fonctionnel
 def test_signup_post_already_user(client):
     _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
     route = "/signup"
@@ -90,6 +97,7 @@ def test_signup_post_already_user(client):
 
 ### Test de Logout - GET
 
+# Fonctionnel
 def test_logout_get(client):
     _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
     _login_user(client, "test@example.com", "123")
@@ -104,6 +112,7 @@ def test_logout_get(client):
 
 # Home sans être connecté
 
+# Unitaire
 def test_home_get_not_logged(client):
     route = "/home"
     response = client.get(route, follow_redirects=True)
@@ -112,6 +121,7 @@ def test_home_get_not_logged(client):
 
 # Home en étant connecté
 
+# Fonctionnel
 def test_home_get(client):
     route = "/home"
     _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
@@ -121,6 +131,7 @@ def test_home_get(client):
 
 ### Test du choix de mêmes Pokémon - POST
 
+# Fonctionnel
 def test_choose_same_pokemon_post(client):
     route = "/home"
     _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
@@ -131,9 +142,10 @@ def test_choose_same_pokemon_post(client):
     response = client.post(route, data=data_to_send, follow_redirects=True)
     assert response.status_code == 200
     assert response.request.path == "/home"
-
+    
 ### Test de Home - POST
 
+# Fonctionnel
 def test_home_post_logged(client):
     route = "/home"
     _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
@@ -147,6 +159,7 @@ def test_home_post_logged(client):
     
 ### Test de Result - GET
 
+# Fonctionnel
 def test_result_get(client, requests_mock):
     route = "/result"
     url = "http://127.0.0.1:5000/result"
@@ -167,6 +180,7 @@ def test_result_get(client, requests_mock):
 
 ### Test de Profile sans être connecté
 
+# Unitaire
 def test_profile_not_logged(client):
     route = "/profile"
     # sans login, le profile nous redirige vers le login, on utilise le paramètre follow_redirects pour que la redirection soit effectuée
@@ -179,6 +193,7 @@ def test_profile_not_logged(client):
 
 ### Test de Profile en étant connecté
 
+# Fonctionnel
 def test_profile_logged(client):
     route = "/profile"
     # on crée un utilisateur
@@ -193,6 +208,7 @@ def test_profile_logged(client):
 
 # Test de Admin sans être connecté
 
+# Unitaire
 def test_admin_not_logged(client):
     route = "/admin"
     response = client.get(route, follow_redirects=True)
@@ -201,6 +217,7 @@ def test_admin_not_logged(client):
 
 # Test de Admin en étant connecté
 
+# Fonctionnel
 def test_admin_logged(client):
     route = "/admin"
     _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
@@ -209,6 +226,7 @@ def test_admin_logged(client):
 
 # Test de la restriction de l'accès à la page admin
 
+# Fonctionnel
 def test_blocked_admin(client):
     route = "/admin"
     _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
@@ -219,6 +237,7 @@ def test_blocked_admin(client):
 
 # Test de la modification d'un utilisateur sans être connecté
 
+# Unitaire
 def test_update_user_not_logged(client):
     route = "/admin/update_user"
     response = client.get(route, follow_redirects=True)
@@ -227,6 +246,7 @@ def test_update_user_not_logged(client):
 
 # Test de la modification d'un utilisateur en étant connecté comme non admin
 
+# Fonctionnel
 def test_update_user_logged_user(client):
     route = "/admin/update_user"
     _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
@@ -237,6 +257,7 @@ def test_update_user_logged_user(client):
 
 # Test de la modification d'un utilisateur en étant connecté comme admin - GET
 
+# Fonctionnel
 def test_update_user_logged_admin(client):
     route = "/admin/update_user"
     _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
@@ -247,13 +268,12 @@ def test_update_user_logged_admin(client):
 
 # Test de la modification d'un utilisateur en étant connecté comme admin - POST
 
+# Fonctionnel
 def test_update_user_logged_admin_post(client):
     with client.application.app_context():
         _login_user(client, os.environ['ADMIN_EMAIL'], os.environ['ADMIN_PASSWORD'])
         user_id = 1
-        print(user_id)
         user = User.find_by_id(user_id)
-        print(user)
         first_name = "Toto"
         data_to_send = {"first_name": first_name}
         response = client.post(f"/admin/update_user?user_id={user.id}", data = data_to_send, follow_redirects=True)
@@ -263,6 +283,7 @@ def test_update_user_logged_admin_post(client):
 
 # Test de la suppression d'un utilisateur sans être connecté
 
+# Unitaire
 def test_delete_user_not_logged(client):
     route = "/admin/delete_user"
     response = client.get(route, follow_redirects=True)
@@ -271,6 +292,7 @@ def test_delete_user_not_logged(client):
 
 # Test de la suppression d'un utilisateur en étant connecté comme non admin
 
+# Fonctionnel
 def test_delete_user_logged_user(client):
     route = "/admin/delete_user"
     _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
@@ -281,6 +303,7 @@ def test_delete_user_logged_user(client):
 
 # Test de la suppression d'un utilisateur en étant connecté comme admin - GET
 
+# Fonctionnel
 def test_delete_user_logged_admin(client):
     route = "/admin/delete_user"
     _create_user(client, "Mister", "T", "test@example.com", "MT", "123")
@@ -291,6 +314,7 @@ def test_delete_user_logged_admin(client):
 
 # Test de la suppression d'un utilisateur en étant connecté comme admin - POST
 
+# Fonctionnel
 def test_delete_user_logged_admin_post(client):
     with client.application.app_context():
         _create_user(client, "Mister", "T", "test@example.com", "MT", "123")

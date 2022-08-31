@@ -14,9 +14,9 @@ from pokemon_app.models import db, Combat, User, get_mapped_data, get_combat_dat
 
 main = Blueprint('main', __name__)
 
-@main.before_app_first_request
+"""@main.before_app_first_request
 def load_data():
-    init_db()
+    init_db()"""
 
 ## Views
 

@@ -43,7 +43,7 @@ def create_app(mode='development'):
     elif mode == "production":
         app.config.from_object('config.ProductionConfig')
 
-    from pokemon_app.models import User
+    from pokemon_app.models import Pokemon, User
 
     db.init_app(app)
 
@@ -51,7 +51,18 @@ def create_app(mode='development'):
         db.create_all()
         pokemon_data = pd.read_csv(os.path.join(basedir, 'data/intermediate/pokemon.csv'), index_col=False, delimiter = ',')
         pokemon_data = pokemon_data.drop(['Number'], axis=1)
-        pokemon_data.to_sql('pokemon', db.engine, if_exists='append', index=False)
+        # pokemon_data.to_sql('pokemon', db.engine, if_exists='append', index=False)
+        pokemon_sql = pd.read_sql("SELECT * FROM pokemon", db.engine)
+        if pokemon_sql.shape[0] == 0:
+            pokemon_data.to_sql('pokemon', db.engine, if_exists='append', index=False)
+        else:
+            existing_pokemon = pd.read_sql("SELECT name FROM pokemon", db.engine)
+            left_joined_pokemon = pokemon_data.merge(existing_pokemon, on='name', how='left', indicator=True)
+            df = left_joined_pokemon.loc[left_joined_pokemon['_merge'] == 'left_only', 'name']
+            new_pokemon = pokemon_data[pokemon_data['city'].isin(df)]
+            new_pokemon.to_sql('pokemon', db.engine, if_exists='append', index=False)
+
+
         if not User.query.filter_by(email=os.environ["ADMIN_EMAIL"]).first():
             # create new user with the form data. Hash the password so plaintext version isn't saved.
             admin = User(last_name=os.environ['ADMIN_LAST_NAME'], first_name=os.environ['ADMIN_FIRST_NAME'], email=os.environ['ADMIN_EMAIL'], username=os.environ['ADMIN_USERNAME'], password=generate_password_hash(os.environ['ADMIN_PASSWORD'], method='sha256'), role='admin')

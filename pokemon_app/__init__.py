@@ -48,6 +48,7 @@ def create_app(mode='development'):
         app.config.from_object('config.ProductionConfig')
 
     db.init_app(app)
+    
     with app.app_context():
         db.create_all()
 

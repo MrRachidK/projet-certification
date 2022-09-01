@@ -50,19 +50,18 @@ def create_app(mode='development'):
     from pokemon_app.models import Pokemon, User, Combat
 
     db.init_app(app)
+    db.create_all()
+    pokemon_data = pd.read_csv(os.path.join(basedir, 'data/intermediate/pokemon.csv'), index_col=False, delimiter = ',')
+    pokemon_data = pokemon_data.drop(['Number'], axis=1)
+    pokemon_data.to_sql('pokemon', db.engine, if_exists='append', index=False)
+
     with app.app_context():
-        db.create_all()
-
-        pokemon_data = pd.read_csv(os.path.join(basedir, 'data/intermediate/pokemon.csv'), index_col=False, delimiter = ',')
-        pokemon_data = pokemon_data.drop(['Number'], axis=1)
-        pokemon_data.to_sql('pokemon', db.engine, if_exists='append', index=False)    
-
-        """if not User.query.filter_by(email=os.environ["ADMIN_EMAIL"]).first():
+        if not User.query.filter_by(email=os.environ["ADMIN_EMAIL"]).first():
             # create new user with the form data. Hash the password so plaintext version isn't saved.
             admin = User(last_name=os.environ['ADMIN_LAST_NAME'], first_name=os.environ['ADMIN_FIRST_NAME'], email=os.environ['ADMIN_EMAIL'], username=os.environ['ADMIN_USERNAME'], password=generate_password_hash(os.environ['ADMIN_PASSWORD'], method='sha256'), role='admin')
             # add the new user to the database
             db.session.add(admin)
-            db.session.commit()"""
+            db.session.commit()
 
     # Connect to log manager with flask login
     login_manager = LoginManager()

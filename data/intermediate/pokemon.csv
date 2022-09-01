@@ -799,3 +799,4 @@ Number,name,Type_1,Type_2,HP,Attack,Defense,Sp_Atk,Sp_Def,Speed,Generation,Legen
 798,Hoopa Confined,Psychic,Ghost,80,110,60,150,130,70,6,True
 799,Hoopa Unbound,Psychic,Dark,80,160,60,170,130,80,6,True
 800,Volcanion,Fire,Water,80,110,120,130,90,70,6,True
+801,Rowlet,Grass,Flying,68,55,55,50,50,42,7,False

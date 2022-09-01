@@ -46,8 +46,9 @@ def create_app(mode='development'):
 
     from pokemon_app.models import Pokemon, User, Combat
 
+    db.init_app(app)
+
     with app.app_context():
-        db.init_app(app)
         db.create_all()
         pokemon_data = pd.read_csv(os.path.join(basedir, 'data/intermediate/pokemon.csv'), index_col=False, delimiter = ',')
         pokemon_data = pokemon_data.drop(['Number'], axis=1)

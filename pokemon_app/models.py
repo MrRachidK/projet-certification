@@ -21,7 +21,7 @@ db = SQLAlchemy()
 #    return binaryData
 
 class Pokemon(db.Model):
-    __tablename__ = 'a'
+    __tablename__ = 'pokemon'
     number = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     type_1 = db.Column(db.String(255))
@@ -67,12 +67,12 @@ class Pokemon(db.Model):
         db.session.commit()
 
 class Combat(db.Model):
-    __tablename__ = 'b'
+    __tablename__ = 'combat'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, ForeignKey('c.id'))
-    first_pokemon = db.Column(db.Integer, ForeignKey('a.number'))
-    second_pokemon = db.Column(db.Integer, ForeignKey('a.number'))
-    winner = db.Column(db.Integer, ForeignKey('a.number'))
+    user_id = db.Column(db.Integer, ForeignKey('user.id'))
+    first_pokemon = db.Column(db.Integer, ForeignKey('pokemon.number'))
+    second_pokemon = db.Column(db.Integer, ForeignKey('pokemon.number'))
+    winner = db.Column(db.Integer, ForeignKey('pokemon.number'))
 
     def __repr__(self):
         return '<Combat %r>' % self.id
@@ -125,7 +125,7 @@ class Combat(db.Model):
 #        db.session.commit()
 
 class User(UserMixin, db.Model):
-    __tablename__ = 'c'
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     last_name = db.Column(db.String(255))
     first_name = db.Column(db.String(255))
@@ -168,7 +168,7 @@ def init_db():
 
     pokemon_data = pd.read_csv(os.path.join(basedir, 'data/intermediate/pokemon.csv'), index_col=False, delimiter = ',')
     pokemon_data = pokemon_data.drop(['Number'], axis=1)
-    pokemon_data.to_sql('a', db.engine, if_exists='append', index=False)    
+    pokemon_data.to_sql('pokemon', db.engine, if_exists='append', index=False)    
     
     # Create admin user
     admin = User(last_name=os.environ['ADMIN_LAST_NAME'], first_name=os.environ['ADMIN_FIRST_NAME'], email=os.environ['ADMIN_EMAIL'], username=os.environ['ADMIN_USERNAME'], password=generate_password_hash(os.environ['ADMIN_PASSWORD'], method='sha256'), role='admin')   

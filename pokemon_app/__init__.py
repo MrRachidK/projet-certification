@@ -13,10 +13,7 @@ import pandas as pd
 from config import basedir
 
 from pokemon_app.models import User
-from .models import init_db
-
-
-db = SQLAlchemy()
+from .models import init_db, db
 
 def create_app(mode='development'):
 

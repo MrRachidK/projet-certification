@@ -15,6 +15,9 @@ from config import basedir
 from pokemon_app.models import User
 from .models import init_db
 
+
+db = SQLAlchemy()
+
 def create_app(mode='development'):
 
     # Upload env variables
@@ -44,8 +47,7 @@ def create_app(mode='development'):
     elif mode == "production":
         app.config.from_object('config.ProductionConfig')
 
-    db = SQLAlchemy(app)
-
+    db.init_app(app)
     with app.app_context():
         db.create_all()
 
@@ -53,7 +55,7 @@ def create_app(mode='development'):
         pokemon_data = pokemon_data.drop(['Number'], axis=1)
         pokemon_data.to_sql('pokemon', db.engine, if_exists='append', index=False)    
 
-        if not User.query.filter_by(email=os.environ["ADMIN_MAIL"]).first():
+        if not User.query.filter_by(email=os.environ["ADMIN_EMAIL"]).first():
             # create new user with the form data. Hash the password so plaintext version isn't saved.
             admin = User(last_name=os.environ['ADMIN_LAST_NAME'], first_name=os.environ['ADMIN_FIRST_NAME'], email=os.environ['ADMIN_EMAIL'], username=os.environ['ADMIN_USERNAME'], password=generate_password_hash(os.environ['ADMIN_PASSWORD'], method='sha256'), role='admin')
             # add the new user to the database

@@ -47,8 +47,9 @@ def create_app(mode='development'):
     elif mode == "production":
         app.config.from_object('config.ProductionConfig')
 
+    from pokemon_app.models import Pokemon, User, Combat
+
     db.init_app(app)
-    
     with app.app_context():
         db.create_all()
 

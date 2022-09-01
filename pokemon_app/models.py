@@ -21,7 +21,7 @@ db = SQLAlchemy()
 #    return binaryData
 
 class Pokemon(db.Model):
-    __tablename__ = 'pokemon'
+    __tablename__ = 'a'
     number = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     type_1 = db.Column(db.String(255))
@@ -67,12 +67,12 @@ class Pokemon(db.Model):
         db.session.commit()
 
 class Combat(db.Model):
-    __tablename__ = 'combat'
+    __tablename__ = 'b'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, ForeignKey('user.id'))
-    first_pokemon = db.Column(db.Integer, ForeignKey('pokemon.number'))
-    second_pokemon = db.Column(db.Integer, ForeignKey('pokemon.number'))
-    winner = db.Column(db.Integer, ForeignKey('pokemon.number'))
+    user_id = db.Column(db.Integer, ForeignKey('c.id'))
+    first_pokemon = db.Column(db.Integer, ForeignKey('a.number'))
+    second_pokemon = db.Column(db.Integer, ForeignKey('a.number'))
+    winner = db.Column(db.Integer, ForeignKey('a.number'))
 
     def __repr__(self):
         return '<Combat %r>' % self.id
@@ -125,7 +125,7 @@ class Combat(db.Model):
 #        db.session.commit()
 
 class User(UserMixin, db.Model):
-    __tablename__ = 'user'
+    __tablename__ = 'c'
     id = db.Column(db.Integer, primary_key=True)
     last_name = db.Column(db.String(255))
     first_name = db.Column(db.String(255))

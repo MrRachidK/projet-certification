@@ -59,7 +59,7 @@ def create_app(mode='development'):
             existing_pokemon = pd.read_sql("SELECT name FROM pokemon", db.engine)
             left_joined_pokemon = pokemon_data.merge(existing_pokemon, on='name', how='left', indicator=True)
             df = left_joined_pokemon.loc[left_joined_pokemon['_merge'] == 'left_only', 'name']
-            new_pokemon = pokemon_data[pokemon_data['city'].isin(df)]
+            new_pokemon = pokemon_data[pokemon_data['name'].isin(df)]
             new_pokemon.to_sql('pokemon', db.engine, if_exists='append', index=False)
 
 

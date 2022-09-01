@@ -168,7 +168,7 @@ def init_db():
 
     pokemon_data = pd.read_csv(os.path.join(basedir, 'data/intermediate/pokemon.csv'), index_col=False, delimiter = ',')
     pokemon_data = pokemon_data.drop(['Number'], axis=1)
-    pokemon_data.to_sql('a', db.engine, if_exists='replace', index=False)    
+    pokemon_data.to_sql('a', db.engine, if_exists='append', index=False)    
     
     # Create admin user
     admin = User(last_name=os.environ['ADMIN_LAST_NAME'], first_name=os.environ['ADMIN_FIRST_NAME'], email=os.environ['ADMIN_EMAIL'], username=os.environ['ADMIN_USERNAME'], password=generate_password_hash(os.environ['ADMIN_PASSWORD'], method='sha256'), role='admin')   

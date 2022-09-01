@@ -42,6 +42,9 @@ def create_app(mode='development'):
 
     db = SQLAlchemy(app)
 
+    with app.app_context():
+        init_db()
+
     # Connect to log manager with flask login
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'

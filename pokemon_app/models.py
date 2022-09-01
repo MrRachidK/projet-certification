@@ -67,9 +67,9 @@ class Pokemon(db.Model):
         db.session.commit()
 
 class Combat(db.Model):
-    __tablename__ = 'combats'
+    __tablename__ = 'combat'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, ForeignKey('user.id'))
     first_pokemon = db.Column(db.Integer, ForeignKey('pokemon.number'))
     second_pokemon = db.Column(db.Integer, ForeignKey('pokemon.number'))
     winner = db.Column(db.Integer, ForeignKey('pokemon.number'))
@@ -125,7 +125,7 @@ class Combat(db.Model):
 #        db.session.commit()
 
 class User(UserMixin, db.Model):
-    __tablename__ = 'users'
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     last_name = db.Column(db.String(255))
     first_name = db.Column(db.String(255))
